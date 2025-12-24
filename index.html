@@ -1,740 +1,1218 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shalev Ben David | Full Stack Developer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
-        /* --- Reset & Base --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Consolas', 'Courier New', monospace;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        a { text-decoration: none; color: inherit; }
-        
-        /* --- Layout Grid --- */
-        .vscode-container {
-            display: flex;
-            flex: 1;
-            height: calc(100vh - 25px);
-            overflow: hidden;
-        }
+      /* --- Reset & Base --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Consolas", "Courier New", monospace;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
 
-        /* --- Activity Bar --- */
-        .activity-bar {
-            width: 50px;
-            background-color: #333333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 10px;
-            flex-shrink: 0;
-            z-index: 20;
-        }
-        .activity-bar .icon {
-            font-size: 24px;
-            color: #858585;
-            margin-bottom: 25px;
-            cursor: pointer;
-            padding: 10px;
-            border-left: 2px solid transparent;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .activity-bar .icon:hover { color: white; }
-        .activity-bar .icon.active { color: white; border-left-color: #007acc; }
-        .activity-bar .bottom { margin-top: auto; margin-bottom: 10px; }
+      /* --- Layout Grid --- */
+      .vscode-container {
+        display: flex;
+        flex: 1;
+        height: calc(100vh - 25px);
+        overflow: hidden;
+      }
 
-        /* Notification Badge */
-        .badge-notification {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 10px;
-            height: 10px;
-            background-color: #007acc;
-            border-radius: 50%;
-            display: none; 
-        }
-        .badge-notification.show { display: block; }
+      /* --- Activity Bar --- */
+      .activity-bar {
+        width: 50px;
+        background-color: #333333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+        flex-shrink: 0;
+        z-index: 20;
+      }
+      .activity-bar .icon {
+        font-size: 24px;
+        color: #858585;
+        margin-bottom: 25px;
+        cursor: pointer;
+        padding: 10px;
+        border-left: 2px solid transparent;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .activity-bar .icon:hover {
+        color: white;
+      }
+      .activity-bar .icon.active {
+        color: white;
+        border-left-color: #007acc;
+      }
+      .activity-bar .bottom {
+        margin-top: auto;
+        margin-bottom: 10px;
+      }
 
-        /* --- Sidebar --- */
+      /* Notification Badge */
+      .badge-notification {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 10px;
+        height: 10px;
+        background-color: #007acc;
+        border-radius: 50%;
+        display: none;
+      }
+      .badge-notification.show {
+        display: block;
+      }
+
+      /* --- Sidebar --- */
+      .sidebar {
+        width: 250px;
+        background-color: #252526;
+        font-size: 13px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #1e1e1e;
+        flex-shrink: 0;
+        transition: width 0.1s;
+      }
+      .sidebar-title {
+        padding: 10px 20px;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: #bbbbbb;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+      }
+      .sidebar-view {
+        display: none;
+        flex: 1;
+        overflow-y: auto;
+      }
+      .sidebar-view.active {
+        display: block;
+      }
+
+      /* File Explorer */
+      .folder-header {
+        padding: 5px 20px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #e0e0e0;
+      }
+      .file {
+        padding: 4px 20px 4px 35px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #cccccc;
+        transition: background 0.2s;
+      }
+      .file:hover {
+        background-color: #2a2d2e;
+      }
+      .file.active {
+        background-color: #37373d;
+        color: #ffffff;
+      }
+
+      /* Search */
+      .search-container {
+        padding: 10px;
+      }
+      .search-input {
+        width: 100%;
+        background: #3c3c3c;
+        border: 1px solid #3c3c3c;
+        color: white;
+        padding: 6px;
+        border-radius: 2px;
+        margin-bottom: 10px;
+      }
+      .search-input:focus {
+        outline: 1px solid #007acc;
+      }
+      .search-results {
+        padding: 0 10px;
+        font-size: 12px;
+      }
+      .result-item {
+        padding: 5px;
+        cursor: pointer;
+        color: #9cdcfe;
+      }
+      .result-item:hover {
+        background: #2a2d2e;
+      }
+
+      /* Extensions */
+      .extension-item {
+        display: flex;
+        padding: 10px;
+        border-bottom: 1px solid #3e3e42;
+        cursor: pointer;
+      }
+      .extension-item:hover {
+        background: #2a2d2e;
+      }
+      .ext-icon {
+        width: 35px;
+        height: 35px;
+        background: #3c3c3c;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: 18px;
+        color: #4ec9b0;
+      }
+      .ext-details {
+        flex: 1;
+      }
+      .ext-name {
+        font-weight: bold;
+        font-size: 12px;
+        color: #e0e0e0;
+      }
+      .ext-desc {
+        font-size: 11px;
+        color: #858585;
+        margin: 2px 0;
+      }
+      .btn-install {
+        background: #0e639c;
+        color: white;
+        border: none;
+        padding: 2px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        border-radius: 2px;
+        margin-top: 5px;
+      }
+      .btn-install.installed {
+        background: #3c3c3c;
+        color: #cccccc;
+        cursor: default;
+      }
+
+      /* --- Editor Area --- */
+      .editor-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: #1e1e1e;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        background-color: #252526;
+        height: 35px;
+        overflow-x: auto;
+        flex-shrink: 0;
+      }
+      .tab {
+        padding: 8px 15px;
+        background-color: #2d2d2d;
+        border-right: 1px solid #1e1e1e;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        min-width: 120px;
+        color: #969696;
+        user-select: none;
+      }
+      .tab.active {
+        background-color: #1e1e1e;
+        color: white;
+        border-top: 2px solid #007acc;
+      }
+      .tab:hover {
+        background-color: #1e1e1e;
+      }
+
+      /* Breadcrumbs */
+      .breadcrumbs {
+        padding: 5px 20px;
+        font-size: 12px;
+        color: #858585;
+        border-bottom: 1px solid #2d2d2d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      /* Content Wrapper */
+      .content-wrapper {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 0;
+        position: relative;
+      }
+      .code-content {
+        display: none;
+        padding: 0 20px 40px 20px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .code-content.active {
+        display: block;
+      }
+
+      /* Code Styling */
+      .line {
+        display: flex;
+        align-items: center;
+      }
+      .num {
+        color: #858585;
+        min-width: 45px;
+        text-align: right;
+        margin-right: 20px;
+        user-select: none;
+        font-size: 13px;
+      }
+      .keyword {
+        color: #c586c0;
+      }
+      .var {
+        color: #9cdcfe;
+      }
+      .string {
+        color: #ce9178;
+      }
+      .comment {
+        color: #6a9955;
+        font-style: italic;
+      }
+      .func {
+        color: #dcdcaa;
+      }
+      .key {
+        color: #9cdcfe;
+      }
+      .attr {
+        color: #9cdcfe;
+      }
+      .bool {
+        color: #569cd6;
+      }
+      .bracket {
+        color: #ffd700;
+      }
+
+      /* UI Elements inside code */
+      .preview-container {
+        margin-top: 10px;
+        margin-left: 20px;
+      }
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        padding-bottom: 30px;
+      }
+      .project-card {
+        background: #252526;
+        border: 1px solid #3c3c3c;
+        border-radius: 6px;
+        padding: 15px;
+        transition: transform 0.2s, border-color 0.2s;
+      }
+      .project-card:hover {
+        transform: translateY(-3px);
+        border-color: #007acc;
+      }
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .project-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #4ec9b0;
+      }
+      .project-links a {
+        color: #cccccc;
+        margin-left: 10px;
+        font-size: 18px;
+      }
+      .project-links a:hover {
+        color: #007acc;
+      }
+      .project-desc {
+        color: #cccccc;
+        font-size: 13px;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+      .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .tech-badge {
+        background: #1e1e1e;
+        border: 1px solid #3e3e42;
+        color: #9cdcfe;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+      }
+
+      /* Contact Form */
+      .contact-form {
+        max-width: 500px;
+        background: #252526;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #3c3c3c;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #9cdcfe;
+      }
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        background: #3c3c3c;
+        border: 1px solid #3c3c3c;
+        color: white;
+        padding: 8px;
+        font-family: inherit;
+        border-radius: 4px;
+      }
+      .form-input:focus,
+      .form-textarea:focus {
+        outline: 1px solid #007acc;
+      }
+      .btn-primary {
+        background: #007acc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 2px;
+        font-family: inherit;
+        width: 100%;
+      }
+      .btn-primary:hover {
+        background: #0062a3;
+      }
+
+      /* Terminal */
+      .terminal-area {
+        height: 0;
+        background: #1e1e1e;
+        border-top: 1px solid #3c3c3c;
+        overflow: hidden;
+        transition: height 0.3s ease;
+        font-size: 12px;
+      }
+      .terminal-area.open {
+        height: 120px;
+        padding: 10px;
+      }
+      .terminal-header {
+        display: flex;
+        gap: 20px;
+        color: #858585;
+        border-bottom: 1px solid #2d2d2d;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-size: 11px;
+      }
+      .terminal-content {
+        font-family: "Consolas", monospace;
+        color: #cccccc;
+      }
+      .log-success {
+        color: #4ec9b0;
+      }
+      .log-info {
+        color: #9cdcfe;
+      }
+
+      /* Icons Colors */
+      .js-icon {
+        color: #f1e05a;
+      }
+      .json-icon {
+        color: #cbcb41;
+      }
+      .jsx-icon {
+        color: #61dafb;
+      }
+      .html-icon {
+        color: #e34c26;
+      }
+      .pdf-icon {
+        color: #b30b00;
+      }
+      .md-icon {
+        color: #42a5f5;
+      }
+
+      /* Status Bar */
+      .status-bar {
+        height: 25px;
+        background-color: #007acc;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        font-size: 12px;
+        flex-shrink: 0;
+        z-index: 10;
+      }
+      .status-item {
+        margin-left: 15px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            background-color: #252526;
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #1e1e1e;
-            flex-shrink: 0;
-            transition: width 0.1s;
+          display: none;
+          position: absolute;
+          height: 100%;
+          z-index: 15;
+          width: 80%;
         }
-        .sidebar-title {
-            padding: 10px 20px;
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: #bbbbbb;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
+        .sidebar.mobile-open {
+          display: flex;
         }
-        .sidebar-view { display: none; flex: 1; overflow-y: auto; }
-        .sidebar-view.active { display: block; }
-
-        /* File Explorer */
-        .folder-header {
-            padding: 5px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #e0e0e0;
+        .activity-bar {
+          width: 40px;
         }
-        .file {
-            padding: 4px 20px 4px 35px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #cccccc;
-            transition: background 0.2s;
+        .projects-grid {
+          grid-template-columns: 1fr;
         }
-        .file:hover { background-color: #2a2d2e; }
-        .file.active { background-color: #37373d; color: #ffffff; }
-
-        /* Search */
-        .search-container { padding: 10px; }
-        .search-input {
-            width: 100%;
-            background: #3c3c3c;
-            border: 1px solid #3c3c3c;
-            color: white;
-            padding: 6px;
-            border-radius: 2px;
-            margin-bottom: 10px;
-        }
-        .search-input:focus { outline: 1px solid #007acc; }
-        .search-results { padding: 0 10px; font-size: 12px; }
-        .result-item { padding: 5px; cursor: pointer; color: #9cdcfe; }
-        .result-item:hover { background: #2a2d2e; }
-
-        /* Extensions */
-        .extension-item {
-            display: flex;
-            padding: 10px;
-            border-bottom: 1px solid #3e3e42;
-            cursor: pointer;
-        }
-        .extension-item:hover { background: #2a2d2e; }
-        .ext-icon {
-            width: 35px; height: 35px;
-            background: #3c3c3c;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 10px;
-            font-size: 18px;
-            color: #4ec9b0;
-        }
-        .ext-details { flex: 1; }
-        .ext-name { font-weight: bold; font-size: 12px; color: #e0e0e0; }
-        .ext-desc { font-size: 11px; color: #858585; margin: 2px 0; }
-        .btn-install {
-            background: #0e639c;
-            color: white;
-            border: none;
-            padding: 2px 8px;
-            font-size: 11px;
-            cursor: pointer;
-            border-radius: 2px;
-            margin-top: 5px;
-        }
-        .btn-install.installed {
-            background: #3c3c3c;
-            color: #cccccc;
-            cursor: default;
-        }
-
-        /* --- Editor Area --- */
-        .editor-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #1e1e1e;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background-color: #252526;
-            height: 35px;
-            overflow-x: auto;
-            flex-shrink: 0;
-        }
-        .tab {
-            padding: 8px 15px;
-            background-color: #2d2d2d;
-            border-right: 1px solid #1e1e1e;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            min-width: 120px;
-            color: #969696;
-            user-select: none;
-        }
-        .tab.active {
-            background-color: #1e1e1e;
-            color: white;
-            border-top: 2px solid #007acc;
-        }
-        .tab:hover { background-color: #1e1e1e; }
-
-        /* Breadcrumbs */
-        .breadcrumbs {
-            padding: 5px 20px;
-            font-size: 12px;
-            color: #858585;
-            border-bottom: 1px solid #2d2d2d;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Content Wrapper */
-        .content-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 0;
-            position: relative;
-        }
-        .code-content {
-            display: none;
-            padding: 0 20px 40px 20px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .code-content.active { display: block; }
-
-        /* Code Styling */
-        .line { display: flex; align-items: center; } /* Added align-items center for better text alignment */
-        .num {
-            color: #858585;
-            min-width: 45px;
-            text-align: right;
-            margin-right: 20px;
-            user-select: none;
-            font-size: 13px;
-        }
-        .keyword { color: #c586c0; } 
-        .var { color: #9cdcfe; } 
-        .string { color: #ce9178; } 
-        .comment { color: #6a9955; font-style: italic; } 
-        .func { color: #dcdcaa; } 
-        .key { color: #9cdcfe; } 
-        .attr { color: #9cdcfe; }
-        .bool { color: #569cd6; }
-        .bracket { color: #ffd700; }
-
-        /* UI Elements inside code */
-        .preview-container { margin-top: 10px; margin-left: 20px; }
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; padding-bottom: 30px; }
-        .project-card { background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; padding: 15px; transition: transform 0.2s, border-color 0.2s; }
-        .project-card:hover { transform: translateY(-3px); border-color: #007acc; }
-        .project-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .project-title { font-size: 16px; font-weight: bold; color: #4ec9b0; }
-        .project-links a { color: #cccccc; margin-left: 10px; font-size: 18px; }
-        .project-links a:hover { color: #007acc; }
-        .project-desc { color: #cccccc; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
-        .tech-stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tech-badge { background: #1e1e1e; border: 1px solid #3e3e42; color: #9cdcfe; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-
-        /* Contact Form */
-        .contact-form { max-width: 500px; background: #252526; padding: 20px; border-radius: 8px; border: 1px solid #3c3c3c; }
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; margin-bottom: 5px; color: #9cdcfe; }
-        .form-input, .form-textarea { width: 100%; background: #3c3c3c; border: 1px solid #3c3c3c; color: white; padding: 8px; font-family: inherit; border-radius: 4px; }
-        .form-input:focus, .form-textarea:focus { outline: 1px solid #007acc; }
-        .btn-primary { background: #007acc; color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 2px; font-family: inherit; width: 100%; }
-        .btn-primary:hover { background: #0062a3; }
-
-        /* Terminal */
-        .terminal-area { height: 0; background: #1e1e1e; border-top: 1px solid #3c3c3c; overflow: hidden; transition: height 0.3s ease; font-size: 12px; }
-        .terminal-area.open { height: 120px; padding: 10px; }
-        .terminal-header { display: flex; gap: 20px; color: #858585; border-bottom: 1px solid #2d2d2d; padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 11px;}
-        .terminal-content { font-family: 'Consolas', monospace; color: #cccccc; }
-        .log-success { color: #4ec9b0; }
-        .log-info { color: #9cdcfe; }
-
-        /* Icons Colors */
-        .js-icon { color: #f1e05a; }
-        .json-icon { color: #cbcb41; }
-        .jsx-icon { color: #61dafb; }
-        .html-icon { color: #e34c26; }
-        .pdf-icon { color: #b30b00; }
-        .md-icon { color: #42a5f5; }
-
-        /* Status Bar */
-        .status-bar { height: 25px; background-color: #007acc; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; font-size: 12px; flex-shrink: 0; z-index: 10; }
-        .status-item { margin-left: 15px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; position: absolute; height: 100%; z-index: 15; width: 80%; }
-            .sidebar.mobile-open { display: flex; }
-            .activity-bar { width: 40px; }
-            .projects-grid { grid-template-columns: 1fr; }
-        }
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="vscode-container">
-        <div class="activity-bar">
-            <div class="icon active" onclick="switchSidebar('explorer')" title="Explorer (Files)">
-                <i class="far fa-copy"></i>
-                <div class="badge-notification" id="explorer-badge"></div>
-            </div>
-            <div class="icon" onclick="switchSidebar('search')" title="Search">
-                <i class="fas fa-search"></i>
-            </div>
-            <div class="icon" onclick="switchSidebar('extensions')" title="Extensions (Hobbies)">
-                <i class="fas fa-th-large"></i>
-            </div>
-            
-            <div class="bottom">
-                <div class="icon" onclick="openFile('about')" title="Profile">
-                    <i class="far fa-user-circle"></i>
-                </div>
-                <div class="icon" onclick="openFile('settings')" title="Settings">
-                    <i class="fas fa-cog"></i>
-                </div>
-            </div>
+      <div class="activity-bar">
+        <div
+          class="icon active"
+          onclick="switchSidebar('explorer')"
+          title="Explorer (Files)"
+        >
+          <i class="far fa-copy"></i>
+          <div class="badge-notification" id="explorer-badge"></div>
+        </div>
+        <div class="icon" onclick="switchSidebar('search')" title="Search">
+          <i class="fas fa-search"></i>
+        </div>
+        <div
+          class="icon"
+          onclick="switchSidebar('extensions')"
+          title="Extensions (Hobbies)"
+        >
+          <i class="fas fa-th-large"></i>
         </div>
 
-        <div class="sidebar" id="sidebar">
-            <div id="view-explorer" class="sidebar-view active">
-                <div class="sidebar-title">EXPLORER: PORTFOLIO</div>
-                <div class="folder-header"><i class="fas fa-chevron-down"></i> SHALEV-BEN-DAVID</div>
-                
-                <div class="file active" onclick="openFile('readme')">
-                    <i class="fab fa-markdown md-icon"></i> README.md
-                </div>
-                <div class="file" onclick="openFile('about')">
-                    <i class="fab fa-js-square js-icon"></i> about.js
-                </div>
-                <div class="file" onclick="openFile('settings')">
-                    <i class="fas fa-code json-icon"></i> settings.json
-                </div>
-                <div class="file" onclick="openFile('projects')">
-                    <i class="fab fa-react jsx-icon"></i> projects.jsx
-                </div>
-                <div class="file" onclick="openFile('contact')">
-                    <i class="fab fa-html5 html-icon"></i> contact.html
-                </div>
-                <a href="CV-Shalev Ben David.pdf" download class="file">
-                    <i class="far fa-file-pdf pdf-icon"></i> download_cv.pdf
-                </a>
-            </div>
+        <div class="bottom">
+          <div class="icon" onclick="openFile('about')" title="Profile">
+            <i class="far fa-user-circle"></i>
+          </div>
+          <div class="icon" onclick="openFile('settings')" title="Settings">
+            <i class="fas fa-cog"></i>
+          </div>
+        </div>
+      </div>
 
-            <div id="view-search" class="sidebar-view">
-                <div class="sidebar-title">SEARCH</div>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search files..." onkeyup="handleSearch(this)">
-                    <div id="search-results" class="search-results"></div>
-                </div>
-            </div>
+      <div class="sidebar" id="sidebar">
+        <div id="view-explorer" class="sidebar-view active">
+          <div class="sidebar-title">EXPLORER: PORTFOLIO</div>
+          <div class="folder-header">
+            <i class="fas fa-chevron-down"></i> SHALEV-BEN-DAVID
+          </div>
 
-            <div id="view-extensions" class="sidebar-view">
-                <div class="sidebar-title">EXTENSIONS: HOBBIES</div>
-                
-                <div class="extension-item">
-                    <div class="ext-icon"><i class="fas fa-dumbbell"></i></div>
-                    <div class="ext-details">
-                        <div class="ext-name">Gym & Fitness</div>
-                        <div class="ext-desc">Bodybuilding & Nutrition tracking</div>
-                        <button class="btn-install" onclick="installExtension(this, 'Gym & Fitness')">Install</button>
-                    </div>
-                </div>
-                
-                <div class="extension-item">
-                    <div class="ext-icon"><i class="fas fa-camera"></i></div>
-                    <div class="ext-details">
-                        <div class="ext-name">Photography</div>
-                        <div class="ext-desc">Capturing moments & Editing</div>
-                        <button class="btn-install" onclick="installExtension(this, 'Photography')">Install</button>
-                    </div>
-                </div>
-                
-                 <div class="extension-item">
-                    <div class="ext-icon"><i class="fas fa-utensils"></i></div>
-                    <div class="ext-details">
-                        <div class="ext-name">Cooking</div>
-                        <div class="ext-desc">Culinary arts & Healthy recipes</div>
-                        <button class="btn-install" onclick="installExtension(this, 'Cooking')">Install</button>
-                    </div>
-                </div>
-                
-                <div class="extension-item">
-                    <div class="ext-icon"><i class="fas fa-music"></i></div>
-                    <div class="ext-details">
-                        <div class="ext-name">Music</div>
-                        <div class="ext-desc">Playing instruments & Listening</div>
-                        <button class="btn-install" onclick="installExtension(this, 'Music')">Install</button>
-                    </div>
-                </div>
-                
-                <div class="extension-item">
-                    <div class="ext-icon"><i class="fas fa-hiking"></i></div>
-                    <div class="ext-details">
-                        <div class="ext-name">Hiking</div>
-                        <div class="ext-desc">Exploring nature & trails</div>
-                        <button class="btn-install" onclick="installExtension(this, 'Hiking')">Install</button>
-                    </div>
-                </div>
-            </div>
+          <div class="file active" onclick="openFile('readme')">
+            <i class="fab fa-markdown md-icon"></i> README.md
+          </div>
+          <div class="file" onclick="openFile('about')">
+            <i class="fab fa-js-square js-icon"></i> about.js
+          </div>
+          <div class="file" onclick="openFile('settings')">
+            <i class="fas fa-code json-icon"></i> settings.json
+          </div>
+          <div class="file" onclick="openFile('projects')">
+            <i class="fab fa-react jsx-icon"></i> projects.jsx
+          </div>
+          <div class="file" onclick="openFile('contact')">
+            <i class="fab fa-html5 html-icon"></i> contact.html
+          </div>
+          <a href="CV-Shalev Ben David.pdf" download class="file">
+            <i class="far fa-file-pdf pdf-icon"></i> download_cv.pdf
+          </a>
         </div>
 
-        <div class="editor-area">
-            <div class="tabs">
-                <div class="tab active" id="tab-readme" onclick="openFile('readme')">
-                    <i class="fab fa-markdown md-icon"></i> README.md
-                </div>
-                <div class="tab" id="tab-about" onclick="openFile('about')">
-                    <i class="fab fa-js-square js-icon"></i> about.js
-                </div>
-                <div class="tab" id="tab-settings" onclick="openFile('settings')">
-                    <i class="fas fa-code json-icon"></i> settings.json
-                </div>
-                <div class="tab" id="tab-projects" onclick="openFile('projects')">
-                    <i class="fab fa-react jsx-icon"></i> projects.jsx
-                </div>
-                <div class="tab" id="tab-contact" onclick="openFile('contact')">
-                    <i class="fab fa-html5 html-icon"></i> contact.html
-                </div>
-            </div>
-
-            <div class="breadcrumbs">
-                shalev-ben-david > <span id="current-file">README.md</span>
-            </div>
-
-            <div class="content-wrapper">
-
-                <div id="content-readme" class="code-content active">
-                    <div class="readme-container" style="max-width: 800px;">
-                        <h1 style="font-size: 24px; color: #4ec9b0; border-bottom: 1px solid #3e3e42; padding-bottom: 10px; margin-bottom: 15px;">
-                            Hi there! I'm Shalev Ben David 👋
-                        </h1>
-                        <p style="margin-bottom: 15px;">
-                            Motivated <strong>Full Stack Developer</strong> with hands-on experience building end-to-end web applications using the MERN stack. 
-                        </p>
-                        <h2 style="font-size: 18px; color: #569cd6; margin: 20px 0 10px;">🚀 Quick Stats</h2>
-                        <ul style="margin-left: 20px; color: #ce9178;">
-                            <li>🌍 Based in Israel</li>
-                            <li>💻 Stack: MERN (MongoDB, Express, React, Node.js)</li>
-                            <li>🧠 Focus: Real-time apps, Clean Architecture, Scalability</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div id="content-about" class="code-content">
-                    </div>
-
-                <div id="content-settings" class="code-content">
-                    <div class="line"><span class="num">1</span>{</div>
-                    <div class="line"><span class="num">2</span>&nbsp;&nbsp;<span class="comment">// Workspace Settings</span></div>
-                    <div class="line"><span class="num">3</span>&nbsp;&nbsp;<span class="key">"editor.programmingLanguages"</span>: [</div>
-                    <div class="line"><span class="num">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"JavaScript (ES6+)"</span>,</div>
-                    <div class="line"><span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"TypeScript"</span>,</div>
-                    <div class="line"><span class="num">6</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"Python"</span>,</div>
-                    <div class="line"><span class="num">7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"Java"</span></div>
-                    <div class="line"><span class="num">8</span>&nbsp;&nbsp;],</div>
-                    <div class="line"><span class="num">9</span>&nbsp;&nbsp;<span class="key">"editor.frameworksAndLibraries"</span>: {</div>
-                    <div class="line"><span class="num">10</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"frontend"</span>: [<span class="string">"React"</span>, <span class="string">"Angular"</span>, <span class="string">"Redux"</span>, <span class="string">"Zustand"</span>],</div>
-                    <div class="line"><span class="num">11</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"backend"</span>: [<span class="string">"Node.js"</span>, <span class="string">"Express"</span>, <span class="string">"Socket.IO"</span>]</div>
-                    <div class="line"><span class="num">12</span>&nbsp;&nbsp;},</div>
-                    <div class="line"><span class="num">13</span>&nbsp;&nbsp;<span class="key">"workbench.databases"</span>: [<span class="string">"MongoDB"</span>, <span class="string">"MySQL"</span>, <span class="string">"Firebase"</span>],</div>
-                    <div class="line"><span class="num">14</span>&nbsp;&nbsp;<span class="key">"git.enabled"</span>: <span class="bool">true</span></div>
-                    <div class="line"><span class="num">15</span>}</div>
-                </div>
-
-                <div id="content-projects" class="code-content">
-                    <div class="line"><span class="num">1</span><span class="keyword">import</span>&nbsp;<span class="var">React</span>&nbsp;<span class="keyword">from</span>&nbsp;<span class="string">'react'</span>;</div>
-                    <div class="line"><span class="num">2</span></div>
-                    <div class="line"><span class="num">3</span><span class="keyword">export default function</span> <span class="func">Portfolio</span>() {</div>
-                    <div class="line"><span class="num">4</span>&nbsp;&nbsp;<span class="keyword">return</span> (</div>
-                    <div class="line"><span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="string">"projects-grid"</span><span class="tag">&gt;</span></div>
-                    
-                    <div class="preview-container">
-                        <div class="projects-grid">
-                            <div class="project-card">
-                                <div class="project-header">
-                                    <div class="project-title">💬 Chatty App</div>
-                                    <div class="project-links">
-                                        <a href="https://github.com/shalevbd7/fullstack-chat-app" target="_blank"><i class="fab fa-github"></i></a>
-                                    </div>
-                                </div>
-                                <div class="project-desc">Real-time chat (WhatsApp clone) with Socket.IO, JWT & MERN Stack.</div>
-                                <div class="tech-stack">
-                                    <span class="tech-badge">Socket.IO</span><span class="tech-badge">React</span><span class="tech-badge">Node</span>
-                                </div>
-                            </div>
-                            <div class="project-card">
-                                <div class="project-header">
-                                    <div class="project-title">🎬 Movie System</div>
-                                    <div class="project-links">
-                                        <a href="https://github.com/shalevbd7/movie-web" target="_blank"><i class="fab fa-github"></i></a>
-                                    </div>
-                                </div>
-                                <div class="project-desc">Movie management with Layered Architecture & RBAC.</div>
-                                <div class="tech-stack">
-                                    <span class="tech-badge">MongoDB</span><span class="tech-badge">Express</span><span class="tech-badge">React</span>
-                                </div>
-                            </div>
-                             <div class="project-card">
-                                <div class="project-header">
-                                    <div class="project-title">💪 Fitness Tracker</div>
-                                    <div class="project-links">
-                                        <a href="https://github.com/shalevbd7/fitness-app" target="_blank"><i class="fab fa-github"></i></a>
-                                    </div>
-                                </div>
-                                <div class="project-desc">Nutrition & workout tracking app for trainers.</div>
-                                <div class="tech-stack">
-                                    <span class="tech-badge">MERN</span><span class="tech-badge">Mongoose</span><span class="tech-badge">JWT</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="line"><span class="num">20</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tag">&lt;/div&gt;</span></div>
-                    <div class="line"><span class="num">21</span>&nbsp;&nbsp;);</div>
-                    <div class="line"><span class="num">22</span>}</div>
-                </div>
-
-                <div id="content-contact" class="code-content">
-                    <div class="line"><span class="num">1</span><span class="tag">&lt;!-- Send me an email --&gt;</span></div>
-                    <div class="line"><span class="num">2</span><span class="tag">&lt;form</span> <span class="attr">onsubmit</span>=<span class="string">"handleEmail(event)"</span><span class="tag">&gt;</span></div>
-                    
-                    <div class="preview-container">
-                        <div class="contact-form" id="contactFormElement">
-                            <h3 style="color: #eee; margin-bottom: 15px;">Send me a message</h3>
-                            <div class="form-group">
-                                <label class="form-label">Name</label>
-                                <input type="text" id="email-name" class="form-input" placeholder="Recruiter Name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Subject</label>
-                                <input type="text" id="email-subject" class="form-input" placeholder="Job Opportunity">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Message</label>
-                                <textarea id="email-body" class="form-textarea" rows="4" placeholder="Hi Shalev, I would like to..."></textarea>
-                            </div>
-                            <button type="button" onclick="sendEmail()" class="btn-primary">Send Email</button>
-                        </div>
-                        <div id="email-success" style="display: none; color: #4ec9b0; margin-top: 20px; font-family: 'Consolas', monospace;">
-                            <i class="fas fa-check-circle"></i> Email client opened successfully! Check the terminal below.
-                        </div>
-                    </div>
-
-                    <div class="line"><span class="num">18</span><span class="tag">&lt;/form&gt;</span></div>
-                </div>
-
-            </div>
-
-            <div class="terminal-area" id="terminal">
-                <div class="terminal-header">
-                    <span>PROBLEMS</span>
-                    <span>OUTPUT</span>
-                    <span style="color: white; border-bottom: 1px solid white;">TERMINAL</span>
-                    <span>DEBUG CONSOLE</span>
-                </div>
-                <div class="terminal-content" id="terminal-content"></div>
-            </div>
-
+        <div id="view-search" class="sidebar-view">
+          <div class="sidebar-title">SEARCH</div>
+          <div class="search-container">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search files..."
+              onkeyup="handleSearch(this)"
+            />
+            <div id="search-results" class="search-results"></div>
+          </div>
         </div>
+
+        <div id="view-extensions" class="sidebar-view">
+          <div class="sidebar-title">EXTENSIONS: HOBBIES</div>
+
+          <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-dumbbell"></i></div>
+            <div class="ext-details">
+              <div class="ext-name">Gym & Fitness</div>
+              <div class="ext-desc">Bodybuilding & Nutrition tracking</div>
+              <button
+                class="btn-install"
+                onclick="installExtension(this, 'Gym & Fitness')"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+
+          <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-camera"></i></div>
+            <div class="ext-details">
+              <div class="ext-name">Photography</div>
+              <div class="ext-desc">Capturing moments & Editing</div>
+              <button
+                class="btn-install"
+                onclick="installExtension(this, 'Photography')"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+
+          <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-utensils"></i></div>
+            <div class="ext-details">
+              <div class="ext-name">Cooking</div>
+              <div class="ext-desc">Culinary arts & Healthy recipes</div>
+              <button
+                class="btn-install"
+                onclick="installExtension(this, 'Cooking')"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+
+          <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-music"></i></div>
+            <div class="ext-details">
+              <div class="ext-name">Music</div>
+              <div class="ext-desc">Playing instruments & Listening</div>
+              <button
+                class="btn-install"
+                onclick="installExtension(this, 'Music')"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+
+          <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-hiking"></i></div>
+            <div class="ext-details">
+              <div class="ext-name">Hiking</div>
+              <div class="ext-desc">Exploring nature & trails</div>
+              <button
+                class="btn-install"
+                onclick="installExtension(this, 'Hiking')"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-area">
+        <div class="tabs">
+          <div class="tab active" id="tab-readme" onclick="openFile('readme')">
+            <i class="fab fa-markdown md-icon"></i> README.md
+          </div>
+          <div class="tab" id="tab-about" onclick="openFile('about')">
+            <i class="fab fa-js-square js-icon"></i> about.js
+          </div>
+          <div class="tab" id="tab-settings" onclick="openFile('settings')">
+            <i class="fas fa-code json-icon"></i> settings.json
+          </div>
+          <div class="tab" id="tab-projects" onclick="openFile('projects')">
+            <i class="fab fa-react jsx-icon"></i> projects.jsx
+          </div>
+          <div class="tab" id="tab-contact" onclick="openFile('contact')">
+            <i class="fab fa-html5 html-icon"></i> contact.html
+          </div>
+        </div>
+
+        <div class="breadcrumbs">
+          shalev-ben-david > <span id="current-file">README.md</span>
+        </div>
+
+        <div class="content-wrapper">
+          <div id="content-readme" class="code-content active">
+            <div class="readme-container" style="max-width: 800px">
+              <h1
+                style="
+                  font-size: 24px;
+                  color: #4ec9b0;
+                  border-bottom: 1px solid #3e3e42;
+                  padding-bottom: 10px;
+                  margin-bottom: 15px;
+                "
+              >
+                Hi there! I'm Shalev Ben David 👋
+              </h1>
+              <p style="margin-bottom: 15px">
+                Motivated <strong>Full Stack Developer</strong> with hands-on
+                experience building end-to-end web applications using the MERN
+                stack.
+              </p>
+              <h2 style="font-size: 18px; color: #569cd6; margin: 20px 0 10px">
+                🚀 Quick Stats
+              </h2>
+              <ul style="margin-left: 20px; color: #ce9178">
+                <li>🌍 Based in Israel</li>
+                <li>💻 Stack: MERN (MongoDB, Express, React, Node.js)</li>
+                <li>
+                  🧠 Focus: Real-time apps, Clean Architecture, Scalability
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div id="content-about" class="code-content"></div>
+
+          <div id="content-settings" class="code-content">
+            <div class="line"><span class="num">1</span>{</div>
+            <div class="line">
+              <span class="num">2</span>&nbsp;&nbsp;<span class="comment"
+                >// Workspace Settings</span
+              >
+            </div>
+            <div class="line">
+              <span class="num">3</span>&nbsp;&nbsp;<span class="key"
+                >"editor.programmingLanguages"</span
+              >: [
+            </div>
+            <div class="line">
+              <span class="num">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="string"
+                >"JavaScript (ES6+)"</span
+              >,
+            </div>
+            <div class="line">
+              <span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="string"
+                >"TypeScript"</span
+              >,
+            </div>
+            <div class="line">
+              <span class="num">6</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="string"
+                >"Python"</span
+              >,
+            </div>
+            <div class="line">
+              <span class="num">7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="string"
+                >"Java"</span
+              >
+            </div>
+            <div class="line"><span class="num">8</span>&nbsp;&nbsp;],</div>
+            <div class="line">
+              <span class="num">9</span>&nbsp;&nbsp;<span class="key"
+                >"editor.frameworksAndLibraries"</span
+              >: {
+            </div>
+            <div class="line">
+              <span class="num">10</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="key"
+                >"frontend"</span
+              >: [<span class="string">"React"</span>,
+              <span class="string">"Angular"</span>,
+              <span class="string">"Redux"</span>,
+              <span class="string">"Zustand"</span>],
+            </div>
+            <div class="line">
+              <span class="num">11</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="key"
+                >"backend"</span
+              >: [<span class="string">"Node.js"</span>,
+              <span class="string">"Express"</span>,
+              <span class="string">"Socket.IO"</span>]
+            </div>
+            <div class="line"><span class="num">12</span>&nbsp;&nbsp;},</div>
+            <div class="line">
+              <span class="num">13</span>&nbsp;&nbsp;<span class="key"
+                >"workbench.databases"</span
+              >: [<span class="string">"MongoDB"</span>,
+              <span class="string">"MySQL"</span>,
+              <span class="string">"Firebase"</span>],
+            </div>
+            <div class="line">
+              <span class="num">14</span>&nbsp;&nbsp;<span class="key"
+                >"git.enabled"</span
+              >: <span class="bool">true</span>
+            </div>
+            <div class="line"><span class="num">15</span>}</div>
+          </div>
+
+          <div id="content-projects" class="code-content">
+            <div class="line">
+              <span class="num">1</span><span class="keyword">import</span
+              ><span style="margin: 0 5px"> </span><span class="var">React</span
+              ><span style="margin: 0 5px"> </span
+              ><span class="keyword">from</span
+              ><span style="margin: 0 5px"> </span
+              ><span class="string">'react'</span>;
+            </div>
+            <div class="line"><span class="num">2</span></div>
+            <div class="line">
+              <span class="num">3</span
+              ><span class="keyword">export default function</span>
+              <span class="func">Portfolio</span>() {
+            </div>
+            <div class="line">
+              <span class="num">4</span>&nbsp;&nbsp;<span class="keyword"
+                >return</span
+              >
+              (
+            </div>
+            <div class="line">
+              <span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="tag"
+                >&lt;div</span
+              >
+              <span class="attr">className</span>=<span class="string"
+                >"projects-grid"</span
+              ><span class="tag">&gt;</span>
+            </div>
+
+            <div class="preview-container">
+              <div class="projects-grid">
+                <div class="project-card">
+                  <div class="project-header">
+                    <div class="project-title">💬 Chatty App</div>
+                    <div class="project-links">
+                      <a
+                        href="https://github.com/shalevbd7/fullstack-chat-app"
+                        target="_blank"
+                        ><i class="fab fa-github"></i
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="project-desc">
+                    Real-time chat (WhatsApp clone) with Socket.IO, JWT & MERN
+                    Stack.
+                  </div>
+                  <div class="tech-stack">
+                    <span class="tech-badge">Socket.IO</span
+                    ><span class="tech-badge">React</span
+                    ><span class="tech-badge">Node</span>
+                  </div>
+                </div>
+                <div class="project-card">
+                  <div class="project-header">
+                    <div class="project-title">🎬 Movie System</div>
+                    <div class="project-links">
+                      <a
+                        href="https://github.com/shalevbd7/movie-web"
+                        target="_blank"
+                        ><i class="fab fa-github"></i
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="project-desc">
+                    Movie management with Layered Architecture & RBAC.
+                  </div>
+                  <div class="tech-stack">
+                    <span class="tech-badge">MongoDB</span
+                    ><span class="tech-badge">Express</span
+                    ><span class="tech-badge">React</span>
+                  </div>
+                </div>
+                <div class="project-card">
+                  <div class="project-header">
+                    <div class="project-title">💪 Fitness Tracker</div>
+                    <div class="project-links">
+                      <a
+                        href="https://github.com/shalevbd7/fitness-app"
+                        target="_blank"
+                        ><i class="fab fa-github"></i
+                      ></a>
+                    </div>
+                  </div>
+                  <div class="project-desc">
+                    Nutrition & workout tracking app for trainers.
+                  </div>
+                  <div class="tech-stack">
+                    <span class="tech-badge">React</span
+                    ><span class="tech-badge">Node.js</span
+                    ><span class="tech-badge">MongoDB</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="line">
+              <span class="num">20</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                class="tag"
+                >&lt;/div&gt;</span
+              >
+            </div>
+            <div class="line"><span class="num">21</span>&nbsp;&nbsp;);</div>
+            <div class="line"><span class="num">22</span>}</div>
+          </div>
+
+          <div id="content-contact" class="code-content">
+            <div class="line">
+              <span class="num">1</span
+              ><span class="tag">&lt;!-- Send me an email --&gt;</span>
+            </div>
+            <div class="line">
+              <span class="num">2</span><span class="tag">&lt;form</span>
+              <span class="attr">onsubmit</span>=<span class="string"
+                >"handleEmail(event)"</span
+              ><span class="tag">&gt;</span>
+            </div>
+
+            <div class="preview-container">
+              <div class="contact-form" id="contactFormElement">
+                <h3 style="color: #eee; margin-bottom: 15px">
+                  Send me a message
+                </h3>
+                <div class="form-group">
+                  <label class="form-label">Name</label>
+                  <input
+                    type="text"
+                    id="email-name"
+                    class="form-input"
+                    placeholder="Recruiter Name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Subject</label>
+                  <input
+                    type="text"
+                    id="email-subject"
+                    class="form-input"
+                    placeholder="Job Opportunity"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Message</label>
+                  <textarea
+                    id="email-body"
+                    class="form-textarea"
+                    rows="4"
+                    placeholder="Hi Shalev, I would like to..."
+                  ></textarea>
+                </div>
+                <button type="button" onclick="sendEmail()" class="btn-primary">
+                  Send Email
+                </button>
+              </div>
+              <div
+                id="email-success"
+                style="
+                  display: none;
+                  color: #4ec9b0;
+                  margin-top: 20px;
+                  font-family: 'Consolas', monospace;
+                "
+              >
+                <i class="fas fa-check-circle"></i> Email client opened
+                successfully! Check the terminal below.
+              </div>
+            </div>
+
+            <div class="line">
+              <span class="num">18</span><span class="tag">&lt;/form&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-area" id="terminal">
+          <div class="terminal-header">
+            <span>PROBLEMS</span>
+            <span>OUTPUT</span>
+            <span style="color: white; border-bottom: 1px solid white"
+              >TERMINAL</span
+            >
+            <span>DEBUG CONSOLE</span>
+          </div>
+          <div class="terminal-content" id="terminal-content"></div>
+        </div>
+      </div>
     </div>
 
     <div class="status-bar">
-        <div class="left">
-            <div class="status-item"><i class="fas fa-code-branch"></i> main*</div>
-            <div class="status-item"><i class="far fa-times-circle"></i> 0</div>
-        </div>
-        <div class="right">
-            <div class="status-item">Ln 12, Col 4</div>
-            <div class="status-item">UTF-8</div>
-            <div class="status-item">React</div>
-            <div class="status-item"><i class="far fa-bell"></i></div>
-        </div>
+      <div class="left">
+        <div class="status-item"><i class="fas fa-code-branch"></i> main*</div>
+        <div class="status-item"><i class="far fa-times-circle"></i> 0</div>
+      </div>
+      <div class="right">
+        <div class="status-item">Ln 12, Col 4</div>
+        <div class="status-item">UTF-8</div>
+        <div class="status-item">React</div>
+        <div class="status-item"><i class="far fa-bell"></i></div>
+      </div>
     </div>
 
     <script>
-        // --- State Management ---
-        let installedHobbies = [];
+      // --- State Management ---
+      let installedHobbies = [];
 
-        // --- Initialization ---
-        document.addEventListener("DOMContentLoaded", () => {
+      // --- Initialization ---
+      document.addEventListener("DOMContentLoaded", () => {
+        renderAboutFile();
+      });
+
+      // --- 1. Dynamic Rendering of about.js ---
+      function renderAboutFile() {
+        const container = document.getElementById("content-about");
+        let html = "";
+        let lineNum = 1;
+
+        const addLine = (content) => {
+          html += `<div class="line"><span class="num">${lineNum++}</span>${content}</div>`;
+        };
+
+        // Static Top Part
+        addLine('<span class="comment">/**</span>');
+        addLine('<span class="comment"> * Developer Profile</span>');
+        addLine('<span class="comment"> * @author Shalev Ben David</span>');
+        addLine('<span class="comment"> */</span>');
+        addLine(
+          '<span class="keyword">const</span> <span class="var">developer</span> <span class="keyword">=</span> {'
+        );
+        addLine(
+          '&nbsp;&nbsp;<span class="attr">name</span>: <span class="string">"Shalev Ben David"</span>,'
+        );
+        addLine(
+          '&nbsp;&nbsp;<span class="attr">role</span>: <span class="string">"Full Stack Developer"</span>,'
+        );
+        addLine(
+          '&nbsp;&nbsp;<span class="attr">traits</span>: [<span class="string">"Leadership"</span>, <span class="string">"Creative"</span>, <span class="string">"Self-Learner"</span>],'
+        );
+        addLine(
+          '&nbsp;&nbsp;<span class="attr">status</span>: <span class="string">"Open to work"</span>,'
+        );
+
+        // Dynamic Hobbies Part
+        if (installedHobbies.length > 0) {
+          // Format array as string: ["Gym", "Music"]
+          const hobbiesString = installedHobbies
+            .map((h) => `<span class="string">"${h}"</span>`)
+            .join(", ");
+          addLine(
+            `&nbsp;&nbsp;<span class="attr">hobbies</span>: [${hobbiesString}]`
+          );
+        } else {
+          // If empty, we can show commented out or empty array
+          addLine(
+            `&nbsp;&nbsp;<span class="comment">// Install extensions to see hobbies...</span>`
+          );
+        }
+
+        // Closing brace
+        addLine("};");
+
+        container.innerHTML = html;
+      }
+
+      // --- 2. Extensions Logic ---
+      function installExtension(btn, hobbyName) {
+        btn.innerText = "Installing...";
+
+        setTimeout(() => {
+          btn.innerText = "Installed";
+          btn.classList.add("installed");
+
+          // Add to state if not exists
+          if (!installedHobbies.includes(hobbyName)) {
+            installedHobbies.push(hobbyName);
+
+            // Re-render the file
             renderAboutFile();
+
+            // Notification Dot on Explorer
+            const badge = document.getElementById("explorer-badge");
+            badge.classList.add("show");
+
+            // Optional: Remove badge after few seconds
+            setTimeout(() => badge.classList.remove("show"), 3000);
+          }
+        }, 800);
+      }
+
+      // --- 3. Navigation Logic ---
+      function openFile(fileId) {
+        document
+          .querySelectorAll(".activity-bar .icon")
+          .forEach((i) => i.classList.remove("active"));
+        document
+          .querySelector('.activity-bar .icon[title="Explorer (Files)"]')
+          .classList.add("active");
+
+        switchSidebar("explorer");
+
+        document
+          .querySelectorAll(".code-content")
+          .forEach((c) => c.classList.remove("active"));
+        document.getElementById("content-" + fileId).classList.add("active");
+
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        const activeTab = document.getElementById("tab-" + fileId);
+        if (activeTab) activeTab.classList.add("active");
+
+        document
+          .querySelectorAll(".file")
+          .forEach((f) => f.classList.remove("active"));
+        const sidebarFile = Array.from(document.querySelectorAll(".file")).find(
+          (f) => f.getAttribute("onclick").includes(fileId)
+        );
+        if (sidebarFile) sidebarFile.classList.add("active");
+
+        const nameMap = {
+          readme: "README.md",
+          about: "about.js",
+          settings: "settings.json",
+          projects: "projects.jsx",
+          contact: "contact.html",
+        };
+        document.getElementById("current-file").innerText = nameMap[fileId];
+      }
+
+      function switchSidebar(viewName) {
+        document
+          .querySelectorAll(".activity-bar .icon")
+          .forEach((icon) => icon.classList.remove("active"));
+
+        let title = "";
+        if (viewName === "explorer") title = "Explorer (Files)";
+        if (viewName === "search") title = "Search";
+        if (viewName === "extensions") title = "Extensions (Hobbies)";
+
+        const activeIcon = Array.from(
+          document.querySelectorAll(".activity-bar .icon")
+        ).find((i) => i.title === title);
+        if (activeIcon) activeIcon.classList.add("active");
+
+        document
+          .querySelectorAll(".sidebar-view")
+          .forEach((view) => view.classList.remove("active"));
+        document.getElementById("view-" + viewName).classList.add("active");
+      }
+
+      // --- 4. Search Logic ---
+      function handleSearch(input) {
+        const query = input.value.toLowerCase();
+        const resultsContainer = document.getElementById("search-results");
+        resultsContainer.innerHTML = "";
+
+        if (query.length < 2) return;
+
+        const files = [
+          { name: "README.md", id: "readme" },
+          { name: "about.js", id: "about" },
+          { name: "settings.json", id: "settings" },
+          { name: "projects.jsx", id: "projects" },
+          { name: "contact.html", id: "contact" },
+        ];
+
+        const matches = files.filter((f) =>
+          f.name.toLowerCase().includes(query)
+        );
+
+        matches.forEach((match) => {
+          const div = document.createElement("div");
+          div.className = "result-item";
+          div.innerText = match.name;
+          div.onclick = () => openFile(match.id);
+          resultsContainer.appendChild(div);
         });
 
-        // --- 1. Dynamic Rendering of about.js ---
-        function renderAboutFile() {
-            const container = document.getElementById('content-about');
-            let html = '';
-            let lineNum = 1;
-
-            const addLine = (content) => {
-                html += `<div class="line"><span class="num">${lineNum++}</span>${content}</div>`;
-            };
-
-            // Static Top Part
-            addLine('<span class="comment">/**</span>');
-            addLine('<span class="comment"> * Developer Profile</span>');
-            addLine('<span class="comment"> * @author Shalev Ben David</span>');
-            addLine('<span class="comment"> */</span>');
-            addLine('<span class="keyword">const</span> <span class="var">developer</span> <span class="keyword">=</span> {');
-            addLine('&nbsp;&nbsp;<span class="attr">name</span>: <span class="string">"Shalev Ben David"</span>,');
-            addLine('&nbsp;&nbsp;<span class="attr">role</span>: <span class="string">"Full Stack Developer"</span>,');
-            addLine('&nbsp;&nbsp;<span class="attr">traits</span>: [<span class="string">"Leadership"</span>, <span class="string">"Creative"</span>, <span class="string">"Self-Learner"</span>],');
-            addLine('&nbsp;&nbsp;<span class="attr">status</span>: <span class="string">"Open to work"</span>,');
-
-            // Dynamic Hobbies Part
-            if (installedHobbies.length > 0) {
-                // Format array as string: ["Gym", "Music"]
-                const hobbiesString = installedHobbies.map(h => `<span class="string">"${h}"</span>`).join(', ');
-                addLine(`&nbsp;&nbsp;<span class="attr">hobbies</span>: [${hobbiesString}]`);
-            } else {
-                // If empty, we can show commented out or empty array
-                addLine(`&nbsp;&nbsp;<span class="comment">// Install extensions to see hobbies...</span>`);
-            }
-
-            // Closing brace
-            addLine('};');
-
-            container.innerHTML = html;
+        if (matches.length === 0) {
+          resultsContainer.innerHTML =
+            '<div style="padding:5px; color:#858585;">No results found</div>';
         }
+      }
 
-        // --- 2. Extensions Logic ---
-        function installExtension(btn, hobbyName) {
-            btn.innerText = "Installing...";
-            
-            setTimeout(() => {
-                btn.innerText = "Installed";
-                btn.classList.add("installed");
-                
-                // Add to state if not exists
-                if (!installedHobbies.includes(hobbyName)) {
-                    installedHobbies.push(hobbyName);
-                    
-                    // Re-render the file
-                    renderAboutFile();
+      // --- 5. Email Logic ---
+      function sendEmail() {
+        const name = document.getElementById("email-name").value;
+        const subject = document.getElementById("email-subject").value;
+        const body = document.getElementById("email-body").value;
 
-                    // Notification Dot on Explorer
-                    const badge = document.getElementById('explorer-badge');
-                    badge.classList.add('show');
-                    
-                    // Optional: Remove badge after few seconds
-                    setTimeout(() => badge.classList.remove('show'), 3000);
-                }
-            }, 800);
-        }
+        const mailtoLink = `mailto:shalevbd7@gmail.com?subject=${encodeURIComponent(
+          subject
+        )}&body=${encodeURIComponent("Name: " + name + "\n\n" + body)}`;
+        window.location.href = mailtoLink;
 
-        // --- 3. Navigation Logic ---
-        function openFile(fileId) {
-            document.querySelectorAll('.activity-bar .icon').forEach(i => i.classList.remove('active'));
-            document.querySelector('.activity-bar .icon[title="Explorer (Files)"]').classList.add('active');
-            
-            switchSidebar('explorer');
+        document.getElementById("contactFormElement").style.display = "none";
+        document.getElementById("email-success").style.display = "block";
 
-            document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('content-' + fileId).classList.add('active');
+        const terminal = document.getElementById("terminal");
+        const terminalContent = document.getElementById("terminal-content");
 
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            const activeTab = document.getElementById('tab-' + fileId);
-            if(activeTab) activeTab.classList.add('active');
-
-            document.querySelectorAll('.file').forEach(f => f.classList.remove('active'));
-            const sidebarFile = Array.from(document.querySelectorAll('.file')).find(f => f.getAttribute('onclick').includes(fileId));
-            if(sidebarFile) sidebarFile.classList.add('active');
-
-            const nameMap = {
-                'readme': 'README.md', 'about': 'about.js', 'settings': 'settings.json', 
-                'projects': 'projects.jsx', 'contact': 'contact.html'
-            };
-            document.getElementById('current-file').innerText = nameMap[fileId];
-        }
-
-        function switchSidebar(viewName) {
-            document.querySelectorAll('.activity-bar .icon').forEach(icon => icon.classList.remove('active'));
-            
-            let title = "";
-            if(viewName === 'explorer') title = "Explorer (Files)";
-            if(viewName === 'search') title = "Search";
-            if(viewName === 'extensions') title = "Extensions (Hobbies)";
-            
-            const activeIcon = Array.from(document.querySelectorAll('.activity-bar .icon')).find(i => i.title === title);
-            if(activeIcon) activeIcon.classList.add('active');
-
-            document.querySelectorAll('.sidebar-view').forEach(view => view.classList.remove('active'));
-            document.getElementById('view-' + viewName).classList.add('active');
-        }
-
-        // --- 4. Search Logic ---
-        function handleSearch(input) {
-            const query = input.value.toLowerCase();
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = ''; 
-
-            if(query.length < 2) return;
-
-            const files = [
-                { name: 'README.md', id: 'readme' },
-                { name: 'about.js', id: 'about' },
-                { name: 'settings.json', id: 'settings' },
-                { name: 'projects.jsx', id: 'projects' },
-                { name: 'contact.html', id: 'contact' }
-            ];
-
-            const matches = files.filter(f => f.name.toLowerCase().includes(query));
-
-            matches.forEach(match => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                div.innerText = match.name;
-                div.onclick = () => openFile(match.id);
-                resultsContainer.appendChild(div);
-            });
-
-            if(matches.length === 0) {
-                resultsContainer.innerHTML = '<div style="padding:5px; color:#858585;">No results found</div>';
-            }
-        }
-
-        // --- 5. Email Logic ---
-        function sendEmail() {
-            const name = document.getElementById('email-name').value;
-            const subject = document.getElementById('email-subject').value;
-            const body = document.getElementById('email-body').value;
-
-            const mailtoLink = `mailto:shalevbd7@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent("Name: " + name + "\n\n" + body)}`;
-            window.location.href = mailtoLink;
-
-            document.getElementById('contactFormElement').style.display = 'none';
-            document.getElementById('email-success').style.display = 'block';
-
-            const terminal = document.getElementById('terminal');
-            const terminalContent = document.getElementById('terminal-content');
-            
-            terminal.classList.add('open');
-            terminalContent.innerHTML = `
+        terminal.classList.add("open");
+        terminalContent.innerHTML = `
                 <div><span class="log-info">➜  portfolio git:(main)</span> node send_email.js</div>
                 <div style="margin-top:5px;">Parsing headers...</div>
                 <div>Connecting to SMTP server...</div>
@@ -742,7 +1220,7 @@
                 <div class="log-success">✔ Status: 200 OK</div>
                 <div><span class="log-info">➜  portfolio git:(main)</span> <span class="blink">_</span></div>
             `;
-        }
+      }
     </script>
-</body>
+  </body>
 </html>
