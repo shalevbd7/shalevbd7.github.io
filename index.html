@@ -28,16 +28,28 @@
         text-decoration: none;
         color: inherit;
       }
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #424242;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
 
       /* --- Layout Grid --- */
       .vscode-container {
         display: flex;
         flex: 1;
-        height: calc(100vh - 25px);
+        height: calc(100vh - 25px); /* Minus status bar */
         overflow: hidden;
+        position: relative;
       }
 
-      /* --- Activity Bar --- */
+      /* --- Activity Bar (Leftmost Slim Bar) --- */
       .activity-bar {
         width: 50px;
         background-color: #333333;
@@ -56,6 +68,8 @@
         padding: 10px;
         border-left: 2px solid transparent;
         transition: all 0.2s;
+        width: 100%;
+        text-align: center;
         position: relative;
       }
       .activity-bar .icon:hover {
@@ -68,13 +82,17 @@
       .activity-bar .bottom {
         margin-top: auto;
         margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
       }
 
       /* Notification Badge */
       .badge-notification {
         position: absolute;
         bottom: 5px;
-        right: 5px;
+        right: 10px;
         width: 10px;
         height: 10px;
         background-color: #007acc;
@@ -85,7 +103,7 @@
         display: block;
       }
 
-      /* --- Sidebar --- */
+      /* --- Sidebar (Explorer/Search) --- */
       .sidebar {
         width: 250px;
         background-color: #252526;
@@ -94,7 +112,7 @@
         flex-direction: column;
         border-right: 1px solid #1e1e1e;
         flex-shrink: 0;
-        transition: width 0.1s;
+        transition: transform 0.3s ease;
       }
       .sidebar-title {
         padding: 10px 20px;
@@ -104,6 +122,7 @@
         text-transform: uppercase;
         display: flex;
         justify-content: space-between;
+        align-items: center;
       }
       .sidebar-view {
         display: none;
@@ -114,18 +133,21 @@
         display: block;
       }
 
-      /* File Explorer */
+      /* File Explorer Styling */
       .folder-header {
-        padding: 5px 20px;
+        padding: 5px 10px;
         font-weight: bold;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 5px;
         color: #e0e0e0;
       }
+      .folder-header:hover {
+        background-color: #2a2d2e;
+      }
       .file {
-        padding: 4px 20px 4px 35px;
+        padding: 4px 10px 4px 25px;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -141,7 +163,7 @@
         color: #ffffff;
       }
 
-      /* Search */
+      /* Search Styling */
       .search-container {
         padding: 10px;
       }
@@ -157,25 +179,24 @@
       .search-input:focus {
         outline: 1px solid #007acc;
       }
-      .search-results {
-        padding: 0 10px;
-        font-size: 12px;
-      }
       .result-item {
-        padding: 5px;
+        padding: 5px 10px;
         cursor: pointer;
         color: #9cdcfe;
+        display: flex;
+        align-items: center;
+        gap: 5px;
       }
       .result-item:hover {
         background: #2a2d2e;
       }
 
-      /* Extensions */
+      /* Extensions Styling */
       .extension-item {
         display: flex;
         padding: 10px;
         border-bottom: 1px solid #3e3e42;
-        cursor: pointer;
+        cursor: default;
       }
       .extension-item:hover {
         background: #2a2d2e;
@@ -208,11 +229,15 @@
         background: #0e639c;
         color: white;
         border: none;
-        padding: 2px 8px;
+        padding: 3px 8px;
         font-size: 11px;
         cursor: pointer;
         border-radius: 2px;
         margin-top: 5px;
+        transition: background 0.2s;
+      }
+      .btn-install:hover {
+        background: #1177bb;
       }
       .btn-install.installed {
         background: #3c3c3c;
@@ -228,6 +253,7 @@
         background-color: #1e1e1e;
         overflow: hidden;
         position: relative;
+        width: 100%; /* For mobile */
       }
 
       /* Tabs */
@@ -237,6 +263,7 @@
         height: 35px;
         overflow-x: auto;
         flex-shrink: 0;
+        align-items: flex-end;
       }
       .tab {
         padding: 8px 15px;
@@ -250,14 +277,32 @@
         min-width: 120px;
         color: #969696;
         user-select: none;
+        height: 100%;
       }
       .tab.active {
         background-color: #1e1e1e;
         color: white;
-        border-top: 2px solid #007acc;
+        border-top: 1px solid #007acc;
       }
-      .tab:hover {
-        background-color: #1e1e1e;
+      .tab.closed {
+        display: none;
+      }
+      .tab:hover:not(.active) {
+        background-color: #2a2d2e;
+      }
+      .tab-close {
+        margin-left: auto;
+        font-size: 14px;
+        opacity: 0;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+      .tab:hover .tab-close {
+        opacity: 1;
+      }
+      .tab-close:hover {
+        background-color: #444;
+        color: white;
       }
 
       /* Breadcrumbs */
@@ -265,7 +310,7 @@
         padding: 5px 20px;
         font-size: 12px;
         color: #858585;
-        border-bottom: 1px solid #2d2d2d;
+        background: #1e1e1e;
         display: flex;
         align-items: center;
         gap: 5px;
@@ -283,70 +328,59 @@
         padding: 0 20px 40px 20px;
         font-size: 14px;
         line-height: 1.5;
+        font-family: "Consolas", "Courier New", monospace;
       }
       .code-content.active {
         display: block;
       }
-
-      /* Code Styling */
-      .line {
-        display: flex;
+      .empty-state {
+        display: none;
+        height: 100%;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        color: #3c3c3c;
       }
-      .num {
-        color: #858585;
-        min-width: 45px;
-        text-align: right;
-        margin-right: 20px;
-        user-select: none;
-        font-size: 13px;
-      }
-      .keyword {
-        color: #c586c0;
-      }
-      .var {
-        color: #9cdcfe;
-      }
-      .string {
-        color: #ce9178;
-      }
-      .comment {
-        color: #6a9955;
-        font-style: italic;
-      }
-      .func {
-        color: #dcdcaa;
-      }
-      .key {
-        color: #9cdcfe;
-      }
-      .attr {
-        color: #9cdcfe;
-      }
-      .bool {
-        color: #569cd6;
-      }
-      .bracket {
-        color: #ffd700;
+      .empty-state i {
+        font-size: 100px;
+        margin-bottom: 20px;
       }
 
-      /* UI Elements inside code */
+      /* Syntax Highlighting Classes */
+      .line { display: flex; white-space: pre; }
+      .num { color: #858585; min-width: 40px; text-align: right; margin-right: 20px; user-select: none; }
+      .keyword { color: #c586c0; }
+      .var { color: #9cdcfe; }
+      .string { color: #ce9178; }
+      .comment { color: #6a9955; font-style: italic; }
+      .func { color: #dcdcaa; }
+      .key { color: #9cdcfe; }
+      .prop { color: #9cdcfe; }
+      .bool { color: #569cd6; }
+      .tag { color: #569cd6; }
+      .attr { color: #9cdcfe; }
+      .bracket { color: #ffd700; }
+      .class-name { color: #4ec9b0; }
+
+      /* Visual Elements (Projects, Form) */
       .preview-container {
-        margin-top: 10px;
-        margin-left: 20px;
+        margin: 20px 0 20px 40px;
       }
+      
+      /* Project Cards */
       .projects-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 20px;
-        padding-bottom: 30px;
       }
       .project-card {
         background: #252526;
         border: 1px solid #3c3c3c;
-        border-radius: 6px;
+        border-radius: 4px;
         padding: 15px;
         transition: transform 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
       }
       .project-card:hover {
         transform: translateY(-3px);
@@ -359,37 +393,60 @@
         margin-bottom: 10px;
       }
       .project-title {
-        font-size: 16px;
-        font-weight: bold;
         color: #4ec9b0;
-      }
-      .project-links a {
-        color: #cccccc;
-        margin-left: 10px;
-        font-size: 18px;
-      }
-      .project-links a:hover {
-        color: #007acc;
+        font-weight: bold;
+        font-size: 16px;
       }
       .project-desc {
         color: #cccccc;
         font-size: 13px;
-        margin-bottom: 10px;
-        line-height: 1.4;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex-grow: 1;
+      }
+      .project-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
       }
       .tech-stack {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
+        gap: 6px;
+        margin-bottom: 10px;
       }
       .tech-badge {
         background: #1e1e1e;
         border: 1px solid #3e3e42;
         color: #9cdcfe;
-        padding: 2px 8px;
-        border-radius: 4px;
+        padding: 2px 6px;
+        border-radius: 3px;
         font-size: 11px;
+      }
+      .btn-run {
+        background: transparent;
+        border: 1px solid #007acc;
+        color: #007acc;
+        padding: 4px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s;
+      }
+      .btn-run:hover {
+        background: #007acc;
+        color: white;
+      }
+      .btn-live {
+        background: #238636;
+        border: 1px solid #238636;
+        color: white;
+      }
+      .btn-live:hover {
+        background: #2ea043;
       }
 
       /* Contact Form */
@@ -397,98 +454,94 @@
         max-width: 500px;
         background: #252526;
         padding: 20px;
-        border-radius: 8px;
         border: 1px solid #3c3c3c;
+        border-radius: 4px;
       }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      .form-label {
-        display: block;
-        margin-bottom: 5px;
-        color: #9cdcfe;
-      }
-      .form-input,
-      .form-textarea {
+      .form-group { margin-bottom: 15px; }
+      .form-label { display: block; margin-bottom: 5px; color: #9cdcfe; font-size: 12px; }
+      .form-input, .form-textarea {
         width: 100%;
         background: #3c3c3c;
         border: 1px solid #3c3c3c;
         color: white;
         padding: 8px;
         font-family: inherit;
-        border-radius: 4px;
+        border-radius: 2px;
       }
-      .form-input:focus,
-      .form-textarea:focus {
-        outline: 1px solid #007acc;
-      }
+      .form-input:focus, .form-textarea:focus { outline: 1px solid #007acc; }
       .btn-primary {
         background: #007acc;
         color: white;
         border: none;
-        padding: 8px 16px;
+        padding: 8px 20px;
         cursor: pointer;
         border-radius: 2px;
         font-family: inherit;
-        width: 100%;
+        font-size: 13px;
       }
-      .btn-primary:hover {
-        background: #0062a3;
-      }
+      .btn-primary:hover { background: #0062a3; }
+
+      /* Markdown specific */
+      .md-h1 { color: #4ec9b0; font-size: 2em; border-bottom: 1px solid #3e3e42; padding-bottom: 0.3em; margin-top: 20px; }
+      .md-h2 { color: #569cd6; font-size: 1.5em; margin-top: 20px; }
+      .md-h3 { color: #dcdcaa; font-size: 1.25em; margin-top: 15px; }
+      .md-p { margin: 10px 0; }
+      .md-link { color: #3794ff; text-decoration: none; }
+      .md-link:hover { text-decoration: underline; }
+      .md-list { margin-left: 20px; }
+      .md-strong { color: #ce9178; font-weight: bold; }
 
       /* Terminal */
       .terminal-area {
-        height: 0;
+        height: 30px; /* Collapsed state */
         background: #1e1e1e;
         border-top: 1px solid #3c3c3c;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
         transition: height 0.3s ease;
-        font-size: 12px;
       }
       .terminal-area.open {
-        height: 120px;
-        padding: 10px;
+        height: 150px;
       }
       .terminal-header {
         display: flex;
         gap: 20px;
+        padding: 5px 15px;
+        font-size: 11px;
+        text-transform: uppercase;
         color: #858585;
         border-bottom: 1px solid #2d2d2d;
-        padding-bottom: 5px;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        font-size: 11px;
+        cursor: pointer;
+        align-items: center;
+      }
+      .terminal-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
+      }
+      .terminal-action-btn {
+        cursor: pointer;
+        padding: 2px;
+      }
+      .terminal-action-btn:hover { color: white; }
+      
+      .terminal-tab.active {
+        color: white;
+        border-bottom: 1px solid white;
       }
       .terminal-content {
+        flex: 1;
+        padding: 10px;
         font-family: "Consolas", monospace;
+        font-size: 12px;
         color: #cccccc;
+        overflow-y: auto;
       }
-      .log-success {
-        color: #4ec9b0;
-      }
-      .log-info {
-        color: #9cdcfe;
-      }
-
-      /* Icons Colors */
-      .js-icon {
-        color: #f1e05a;
-      }
-      .json-icon {
-        color: #cbcb41;
-      }
-      .jsx-icon {
-        color: #61dafb;
-      }
-      .html-icon {
-        color: #e34c26;
-      }
-      .pdf-icon {
-        color: #b30b00;
-      }
-      .md-icon {
-        color: #42a5f5;
-      }
+      .log-success { color: #4ec9b0; }
+      .log-warn { color: #cca700; }
+      .log-info { color: #9cdcfe; }
+      .blink { animation: blinker 1s linear infinite; }
+      @keyframes blinker { 50% { opacity: 0; } }
 
       /* Status Bar */
       .status-bar {
@@ -498,64 +551,83 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 15px;
+        padding: 0 10px;
         font-size: 12px;
         flex-shrink: 0;
         z-index: 10;
+        cursor: default;
       }
       .status-item {
         margin-left: 15px;
         display: flex;
         align-items: center;
         gap: 5px;
-        cursor: pointer;
       }
+      .status-item:hover { background-color: rgba(255,255,255,0.2); border-radius: 2px; }
 
+      /* Icons Colors */
+      .js-icon { color: #f1e05a; }
+      .ts-icon { color: #3178c6; }
+      .json-icon { color: #cbcb41; }
+      .jsx-icon { color: #61dafb; }
+      .css-icon { color: #42a5f5; }
+      .md-icon { color: #a074c4; }
+      .pdf-icon { color: #db534f; }
+
+      /* --- Mobile Responsiveness --- */
       @media (max-width: 768px) {
         .sidebar {
-          display: none;
           position: absolute;
+          left: 0;
+          top: 0;
           height: 100%;
-          z-index: 15;
-          width: 80%;
+          z-index: 30;
+          width: 0;
+          overflow: hidden;
+          background: #252526;
+          border-right: 1px solid #1e1e1e;
         }
         .sidebar.mobile-open {
-          display: flex;
-        }
-        .activity-bar {
-          width: 40px;
+          width: 80%;
+          box-shadow: 5px 0 15px rgba(0,0,0,0.5);
         }
         .projects-grid {
           grid-template-columns: 1fr;
+        }
+        .preview-container {
+          margin: 10px;
+        }
+        /* When sidebar is open, darken the editor */
+        .editor-area::after {
+            content: '';
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 25;
+        }
+        .sidebar-open .editor-area::after {
+            display: block;
         }
       }
     </style>
   </head>
   <body>
-    <div class="vscode-container">
+    <div class="vscode-container" id="main-container">
       <div class="activity-bar">
-        <div
-          class="icon active"
-          onclick="switchSidebar('explorer')"
-          title="Explorer (Files)"
-        >
+        <div class="icon active" onclick="switchSidebar('explorer')" title="Explorer">
           <i class="far fa-copy"></i>
           <div class="badge-notification" id="explorer-badge"></div>
         </div>
         <div class="icon" onclick="switchSidebar('search')" title="Search">
           <i class="fas fa-search"></i>
         </div>
-        <div
-          class="icon"
-          onclick="switchSidebar('extensions')"
-          title="Extensions (Hobbies)"
-        >
+        <div class="icon" onclick="switchSidebar('extensions')" title="Extensions">
           <i class="fas fa-th-large"></i>
         </div>
-
         <div class="bottom">
-          <div class="icon" onclick="openFile('about')" title="Profile">
-            <i class="far fa-user-circle"></i>
+          <div class="icon" onclick="window.location.href='mailto:shalevbd7@gmail.com'" title="Send Email">
+            <i class="far fa-envelope"></i>
           </div>
           <div class="icon" onclick="openFile('settings')" title="Settings">
             <i class="fas fa-cog"></i>
@@ -565,114 +637,82 @@
 
       <div class="sidebar" id="sidebar">
         <div id="view-explorer" class="sidebar-view active">
-          <div class="sidebar-title">EXPLORER: PORTFOLIO</div>
-          <div class="folder-header">
-            <i class="fas fa-chevron-down"></i> SHALEV-BEN-DAVID
+          <div class="sidebar-title">
+            <span>EXPLORER</span>
+            <i class="fas fa-ellipsis-h"></i>
           </div>
-
-          <div class="file active" onclick="openFile('readme')">
-            <i class="fab fa-markdown md-icon"></i> README.md
+          
+          <div class="folder-header" onclick="toggleFolder(this)">
+            <i class="fas fa-chevron-down"></i> 
+            <span>SHALEV-PORTFOLIO</span>
           </div>
-          <div class="file" onclick="openFile('about')">
-            <i class="fab fa-js-square js-icon"></i> about.js
+          
+          <div id="file-list">
+            <div class="file active" onclick="openFile('readme')">
+              <i class="fab fa-markdown md-icon"></i> README.md
+            </div>
+            <div class="file" onclick="openFile('about')">
+              <i class="fab fa-js-square ts-icon"></i> about.ts
+            </div>
+            <div class="file" onclick="openFile('projects')">
+              <i class="fas fa-code json-icon"></i> projects.json
+            </div>
+            <div class="file" onclick="openFile('settings')">
+              <i class="fas fa-code json-icon"></i> settings.json
+            </div>
+            <div class="file" onclick="openFile('contact')">
+              <i class="fab fa-css3-alt css-icon"></i> contact.css
+            </div>
+            <a href="CV-Shalev Ben David.pdf" download class="file" style="text-decoration: none;">
+              <i class="fas fa-file-pdf pdf-icon"></i> CV.pdf
+            </a>
           </div>
-          <div class="file" onclick="openFile('settings')">
-            <i class="fas fa-code json-icon"></i> settings.json
-          </div>
-          <div class="file" onclick="openFile('projects')">
-            <i class="fab fa-react jsx-icon"></i> projects.jsx
-          </div>
-          <div class="file" onclick="openFile('contact')">
-            <i class="fab fa-html5 html-icon"></i> contact.html
-          </div>
-          <a href="CV-Shalev Ben David.pdf" download class="file">
-            <i class="far fa-file-pdf pdf-icon"></i> download_cv.pdf
-          </a>
         </div>
 
         <div id="view-search" class="sidebar-view">
           <div class="sidebar-title">SEARCH</div>
           <div class="search-container">
-            <input
-              type="text"
-              class="search-input"
-              placeholder="Search files..."
-              onkeyup="handleSearch(this)"
-            />
-            <div id="search-results" class="search-results"></div>
+            <input type="text" class="search-input" placeholder="Search files (Ctrl+F)" onkeyup="handleSearch(this)" />
+            <div id="search-results"></div>
           </div>
         </div>
 
         <div id="view-extensions" class="sidebar-view">
-          <div class="sidebar-title">EXTENSIONS: HOBBIES</div>
-
+          <div class="sidebar-title">EXTENSIONS: PERSONAL</div>
+          
           <div class="extension-item">
             <div class="ext-icon"><i class="fas fa-dumbbell"></i></div>
             <div class="ext-details">
               <div class="ext-name">Gym & Fitness</div>
-              <div class="ext-desc">Bodybuilding & Nutrition tracking</div>
-              <button
-                class="btn-install"
-                onclick="installExtension(this, 'Gym & Fitness')"
-              >
-                Install
-              </button>
+              <div class="ext-desc">Adds discipline & strength</div>
+              <button class="btn-install" onclick="installExtension(this, 'Fitness')">Install</button>
             </div>
           </div>
-
+          
           <div class="extension-item">
-            <div class="ext-icon"><i class="fas fa-camera"></i></div>
+            <div class="ext-icon"><i class="fas fa-coffee"></i></div>
             <div class="ext-details">
-              <div class="ext-name">Photography</div>
-              <div class="ext-desc">Capturing moments & Editing</div>
-              <button
-                class="btn-install"
-                onclick="installExtension(this, 'Photography')"
-              >
-                Install
-              </button>
-            </div>
-          </div>
-
-          <div class="extension-item">
-            <div class="ext-icon"><i class="fas fa-utensils"></i></div>
-            <div class="ext-details">
-              <div class="ext-name">Cooking</div>
-              <div class="ext-desc">Culinary arts & Healthy recipes</div>
-              <button
-                class="btn-install"
-                onclick="installExtension(this, 'Cooking')"
-              >
-                Install
-              </button>
+              <div class="ext-name">Coffee Enthusiast</div>
+              <div class="ext-desc">Boosts productivity by 50%</div>
+              <button class="btn-install" onclick="installExtension(this, 'Coffee')">Install</button>
             </div>
           </div>
 
           <div class="extension-item">
             <div class="ext-icon"><i class="fas fa-music"></i></div>
             <div class="ext-details">
-              <div class="ext-name">Music</div>
-              <div class="ext-desc">Playing instruments & Listening</div>
-              <button
-                class="btn-install"
-                onclick="installExtension(this, 'Music')"
-              >
-                Install
-              </button>
+              <div class="ext-name">Musician</div>
+              <div class="ext-desc">Piano & Guitar plugin</div>
+              <button class="btn-install" onclick="installExtension(this, 'Music')">Install</button>
             </div>
           </div>
-
-          <div class="extension-item">
-            <div class="ext-icon"><i class="fas fa-hiking"></i></div>
+          
+           <div class="extension-item">
+            <div class="ext-icon"><i class="fas fa-users"></i></div>
             <div class="ext-details">
-              <div class="ext-name">Hiking</div>
-              <div class="ext-desc">Exploring nature & trails</div>
-              <button
-                class="btn-install"
-                onclick="installExtension(this, 'Hiking')"
-              >
-                Install
-              </button>
+              <div class="ext-name">Leadership</div>
+              <div class="ext-desc">IDF Commander Pack</div>
+              <button class="btn-install installed">Installed</button>
             </div>
           </div>
         </div>
@@ -681,545 +721,645 @@
       <div class="editor-area">
         <div class="tabs">
           <div class="tab active" id="tab-readme" onclick="openFile('readme')">
-            <i class="fab fa-markdown md-icon"></i> README.md
+            <i class="fab fa-markdown md-icon"></i> README.md <span class="tab-close" onclick="closeTab(event, 'readme')">×</span>
           </div>
           <div class="tab" id="tab-about" onclick="openFile('about')">
-            <i class="fab fa-js-square js-icon"></i> about.js
-          </div>
-          <div class="tab" id="tab-settings" onclick="openFile('settings')">
-            <i class="fas fa-code json-icon"></i> settings.json
+            <i class="fab fa-js-square ts-icon"></i> about.ts <span class="tab-close" onclick="closeTab(event, 'about')">×</span>
           </div>
           <div class="tab" id="tab-projects" onclick="openFile('projects')">
-            <i class="fab fa-react jsx-icon"></i> projects.jsx
+            <i class="fas fa-code json-icon"></i> projects.json <span class="tab-close" onclick="closeTab(event, 'projects')">×</span>
+          </div>
+          <div class="tab" id="tab-settings" onclick="openFile('settings')">
+            <i class="fas fa-code json-icon"></i> settings.json <span class="tab-close" onclick="closeTab(event, 'settings')">×</span>
           </div>
           <div class="tab" id="tab-contact" onclick="openFile('contact')">
-            <i class="fab fa-html5 html-icon"></i> contact.html
+            <i class="fab fa-css3-alt css-icon"></i> contact.css <span class="tab-close" onclick="closeTab(event, 'contact')">×</span>
           </div>
         </div>
 
         <div class="breadcrumbs">
-          shalev-ben-david > <span id="current-file">README.md</span>
+          src > shalev-portfolio > <span id="current-filename">README.md</span>
         </div>
 
         <div class="content-wrapper">
+          
+          <div id="empty-state" class="empty-state">
+            <i class="fab fa-react" style="color:#252526;"></i>
+            <p>Select a file from the Explorer to start.</p>
+          </div>
+
           <div id="content-readme" class="code-content active">
-            <div class="readme-container" style="max-width: 800px">
-              <h1
-                style="
-                  font-size: 24px;
-                  color: #4ec9b0;
-                  border-bottom: 1px solid #3e3e42;
-                  padding-bottom: 10px;
-                  margin-bottom: 15px;
-                "
-              >
-                Hi there! I'm Shalev Ben David 👋
-              </h1>
-              <p style="margin-bottom: 15px">
-                Motivated <strong>Full Stack Developer</strong> with hands-on
-                experience building end-to-end web applications using the MERN
-                stack.
-              </p>
-              <h2 style="font-size: 18px; color: #569cd6; margin: 20px 0 10px">
-                🚀 Quick Stats
-              </h2>
-              <ul style="margin-left: 20px; color: #ce9178">
-                <li>🌍 Based in Israel</li>
-                <li>💻 Stack: MERN (MongoDB, Express, React, Node.js)</li>
-                <li>
-                  🧠 Focus: Real-time apps, Clean Architecture, Scalability
-                </li>
-              </ul>
-            </div>
+             <div class="md-h1">Shalev Ben David</div>
+             <div class="md-p"><span class="md-strong">Full Stack Web Developer</span> | MERN Stack Specialist</div>
+             <hr style="border: 0; border-top: 1px solid #3e3e42; margin: 15px 0;">
+             
+             <div class="md-h2">👋 About Me</div>
+             <div class="md-p">Motivated Full Stack Developer with hands-on experience building end-to-end web applications using the MERN stack. Strong ability to design complex system architectures, from database modeling to responsive UI.</div>
+             <div class="md-p">Currently working as a banker at Mizrahi Tefahot while transitioning into full-time development.</div>
+
+             <div class="md-h3">🛠 Core Tech Stack</div>
+             <ul class="md-list">
+               <li><span class="md-strong">Frontend:</span> React.js, Angular, TypeScript, Tailwind CSS, Zustand</li>
+               <li><span class="md-strong">Backend:</span> Node.js, Express, Python, Java</li>
+               <li><span class="md-strong">Database:</span> MongoDB, MySQL, Firebase</li>
+               <li><span class="md-strong">Tools:</span> Docker, Git, JWT, Socket.IO</li>
+             </ul>
+
+             <div class="md-h3">📞 Contact</div>
+             <div class="md-p">
+               Phone: 055-2273100 <br>
+               Email: <a href="mailto:shalevbd7@gmail.com" class="md-link">shalevbd7@gmail.com</a> <br>
+               GitHub: <a href="https://github.com/shalevbd7" target="_blank" class="md-link">shalevbd7</a>
+             </div>
           </div>
 
           <div id="content-about" class="code-content"></div>
 
           <div id="content-settings" class="code-content">
             <div class="line"><span class="num">1</span>{</div>
-            <div class="line">
-              <span class="num">2</span>&nbsp;&nbsp;<span class="comment"
-                >// Workspace Settings</span
-              >
-            </div>
-            <div class="line">
-              <span class="num">3</span>&nbsp;&nbsp;<span class="key"
-                >"editor.programmingLanguages"</span
-              >: [
-            </div>
-            <div class="line">
-              <span class="num">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="string"
-                >"JavaScript (ES6+)"</span
-              >,
-            </div>
-            <div class="line">
-              <span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="string"
-                >"TypeScript"</span
-              >,
-            </div>
-            <div class="line">
-              <span class="num">6</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="string"
-                >"Python"</span
-              >,
-            </div>
-            <div class="line">
-              <span class="num">7</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="string"
-                >"Java"</span
-              >
-            </div>
-            <div class="line"><span class="num">8</span>&nbsp;&nbsp;],</div>
-            <div class="line">
-              <span class="num">9</span>&nbsp;&nbsp;<span class="key"
-                >"editor.frameworksAndLibraries"</span
-              >: {
-            </div>
-            <div class="line">
-              <span class="num">10</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="key"
-                >"frontend"</span
-              >: [<span class="string">"React"</span>,
-              <span class="string">"Angular"</span>,
-              <span class="string">"Redux"</span>,
-              <span class="string">"Zustand"</span>],
-            </div>
-            <div class="line">
-              <span class="num">11</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="key"
-                >"backend"</span
-              >: [<span class="string">"Node.js"</span>,
-              <span class="string">"Express"</span>,
-              <span class="string">"Socket.IO"</span>]
-            </div>
-            <div class="line"><span class="num">12</span>&nbsp;&nbsp;},</div>
-            <div class="line">
-              <span class="num">13</span>&nbsp;&nbsp;<span class="key"
-                >"workbench.databases"</span
-              >: [<span class="string">"MongoDB"</span>,
-              <span class="string">"MySQL"</span>,
-              <span class="string">"Firebase"</span>],
-            </div>
-            <div class="line">
-              <span class="num">14</span>&nbsp;&nbsp;<span class="key"
-                >"git.enabled"</span
-              >: <span class="bool">true</span>
-            </div>
-            <div class="line"><span class="num">15</span>}</div>
+            <div class="line"><span class="num">2</span>&nbsp;&nbsp;<span class="prop">"user.profile"</span>: {</div>
+            <div class="line"><span class="num">3</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"name"</span>: <span class="string">"Shalev Ben David"</span>,</div>
+            <div class="line"><span class="num">4</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"workEthic"</span>: <span class="string">"110%"</span>,</div>
+            <div class="line"><span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"collaboration"</span>: <span class="bool">true</span></div>
+            <div class="line"><span class="num">6</span>&nbsp;&nbsp;},</div>
+            <div class="line"><span class="num">7</span>&nbsp;&nbsp;<span class="prop">"editor.mindset"</span>: {</div>
+            <div class="line"><span class="num">8</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"problemSolving"</span>: <span class="string">"Advanced"</span>,</div>
+            <div class="line"><span class="num">9</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"learning"</span>: <span class="string">"Continuous"</span>,</div>
+            <div class="line"><span class="num">10</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">"underPressure"</span>: <span class="string">"Calm (IDF Trained)"</span></div>
+            <div class="line"><span class="num">11</span>&nbsp;&nbsp;},</div>
+            <div class="line"><span class="num">12</span>&nbsp;&nbsp;<span class="prop">"terminal.integrated.coffee"</span>: <span class="string">"Required"</span>,</div>
+            <div class="line"><span class="num">13</span>&nbsp;&nbsp;<span class="prop">"git.commitMessage"</span>: <span class="string">"Always clean and descriptive"</span></div>
+            <div class="line"><span class="num">14</span>}</div>
           </div>
 
           <div id="content-projects" class="code-content">
-            <div class="line">
-              <span class="num">1</span><span class="keyword">import</span
-              ><span style="margin: 0 5px"> </span><span class="var">React</span
-              ><span style="margin: 0 5px"> </span
-              ><span class="keyword">from</span
-              ><span style="margin: 0 5px"> </span
-              ><span class="string">'react'</span>;
-            </div>
-            <div class="line"><span class="num">2</span></div>
-            <div class="line">
-              <span class="num">3</span
-              ><span class="keyword">export default function</span>
-              <span class="func">Portfolio</span>() {
-            </div>
-            <div class="line">
-              <span class="num">4</span>&nbsp;&nbsp;<span class="keyword"
-                >return</span
-              >
-              (
-            </div>
-            <div class="line">
-              <span class="num">5</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="tag"
-                >&lt;div</span
-              >
-              <span class="attr">className</span>=<span class="string"
-                >"projects-grid"</span
-              ><span class="tag">&gt;</span>
             </div>
 
+          <div id="content-contact" class="code-content">
+            <div class="line"><span class="num">1</span><span class="comment">/* Contact Form Styling */</span></div>
+            <div class="line"><span class="num">2</span><span class="tag">.contact-container</span> {</div>
+            <div class="line"><span class="num">3</span>&nbsp;&nbsp;<span class="attr">display</span>: <span class="string">flex</span>;</div>
+            <div class="line"><span class="num">4</span>&nbsp;&nbsp;<span class="attr">justify-content</span>: <span class="string">center</span>;</div>
+            <div class="line"><span class="num">5</span>}</div>
+            
             <div class="preview-container">
-              <div class="projects-grid">
-                <div class="project-card">
-                  <div class="project-header">
-                    <div class="project-title">💬 Chatty App</div>
-                    <div class="project-links">
-                      <a
-                        href="https://github.com/shalevbd7/fullstack-chat-app"
-                        target="_blank"
-                        ><i class="fab fa-github"></i
-                      ></a>
-                    </div>
-                  </div>
-                  <div class="project-desc">
-                    Real-time chat (WhatsApp clone) with Socket.IO, JWT & MERN
-                    Stack.
-                  </div>
-                  <div class="tech-stack">
-                    <span class="tech-badge">Socket.IO</span
-                    ><span class="tech-badge">React</span
-                    ><span class="tech-badge">Node</span>
-                  </div>
+              <div class="contact-form">
+                <h3 style="color: #eee; margin-bottom: 15px; border-bottom: 1px solid #3e3e42; padding-bottom:10px;">Send Message</h3>
+                <div class="form-group">
+                  <label class="form-label">Subject</label>
+                  <input type="text" id="email-subject" class="form-input" placeholder="Job Opportunity...">
                 </div>
-                <div class="project-card">
-                  <div class="project-header">
-                    <div class="project-title">🎬 Movie System</div>
-                    <div class="project-links">
-                      <a
-                        href="https://github.com/shalevbd7/movie-web"
-                        target="_blank"
-                        ><i class="fab fa-github"></i
-                      ></a>
-                    </div>
-                  </div>
-                  <div class="project-desc">
-                    Movie management with Layered Architecture & RBAC.
-                  </div>
-                  <div class="tech-stack">
-                    <span class="tech-badge">MongoDB</span
-                    ><span class="tech-badge">Express</span
-                    ><span class="tech-badge">React</span>
-                  </div>
+                <div class="form-group">
+                  <label class="form-label">Message Body</label>
+                  <textarea id="email-body" class="form-textarea" rows="3" placeholder="Hi Shalev, I'd like to interview you..."></textarea>
                 </div>
-                <div class="project-card">
-                  <div class="project-header">
-                    <div class="project-title">💪 Fitness Tracker</div>
-                    <div class="project-links">
-                      <a
-                        href="https://github.com/shalevbd7/fitness-app"
-                        target="_blank"
-                        ><i class="fab fa-github"></i
-                      ></a>
-                    </div>
-                  </div>
-                  <div class="project-desc">
-                    Nutrition & workout tracking app for trainers.
-                  </div>
-                  <div class="tech-stack">
-                    <span class="tech-badge">React</span
-                    ><span class="tech-badge">Node.js</span
-                    ><span class="tech-badge">MongoDB</span>
-                  </div>
+                 <div class="form-group">
+                  <label class="form-label">Your Favorite Hook (Optional)</label>
+                  <input type="text" id="email-hook" class="form-input" placeholder="useState? useEffect? Left Hook?">
                 </div>
+                <button type="button" onclick="sendEmail()" class="btn-primary">Execute Send()</button>
               </div>
             </div>
 
-            <div class="line">
-              <span class="num">20</span>&nbsp;&nbsp;&nbsp;&nbsp;<span
-                class="tag"
-                >&lt;/div&gt;</span
-              >
-            </div>
-            <div class="line"><span class="num">21</span>&nbsp;&nbsp;);</div>
+            <div class="line"><span class="num">20</span><span class="tag">#submit-btn</span>:hover {</div>
+            <div class="line"><span class="num">21</span>&nbsp;&nbsp;<span class="attr">background-color</span>: <span class="string">#0062a3</span>;</div>
             <div class="line"><span class="num">22</span>}</div>
           </div>
 
-          <div id="content-contact" class="code-content">
-            <div class="line">
-              <span class="num">1</span
-              ><span class="tag">&lt;!-- Send me an email --&gt;</span>
-            </div>
-            <div class="line">
-              <span class="num">2</span><span class="tag">&lt;form</span>
-              <span class="attr">onsubmit</span>=<span class="string"
-                >"handleEmail(event)"</span
-              ><span class="tag">&gt;</span>
-            </div>
-
-            <div class="preview-container">
-              <div class="contact-form" id="contactFormElement">
-                <h3 style="color: #eee; margin-bottom: 15px">
-                  Send me a message
-                </h3>
-                <div class="form-group">
-                  <label class="form-label">Name</label>
-                  <input
-                    type="text"
-                    id="email-name"
-                    class="form-input"
-                    placeholder="Recruiter Name"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Subject</label>
-                  <input
-                    type="text"
-                    id="email-subject"
-                    class="form-input"
-                    placeholder="Job Opportunity"
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Message</label>
-                  <textarea
-                    id="email-body"
-                    class="form-textarea"
-                    rows="4"
-                    placeholder="Hi Shalev, I would like to..."
-                  ></textarea>
-                </div>
-                <button type="button" onclick="sendEmail()" class="btn-primary">
-                  Send Email
-                </button>
-              </div>
-              <div
-                id="email-success"
-                style="
-                  display: none;
-                  color: #4ec9b0;
-                  margin-top: 20px;
-                  font-family: 'Consolas', monospace;
-                "
-              >
-                <i class="fas fa-check-circle"></i> Email client opened
-                successfully! Check the terminal below.
-              </div>
-            </div>
-
-            <div class="line">
-              <span class="num">18</span><span class="tag">&lt;/form&gt;</span>
-            </div>
-          </div>
         </div>
 
         <div class="terminal-area" id="terminal">
-          <div class="terminal-header">
-            <span>PROBLEMS</span>
-            <span>OUTPUT</span>
-            <span style="color: white; border-bottom: 1px solid white"
-              >TERMINAL</span
-            >
-            <span>DEBUG CONSOLE</span>
+          <div class="terminal-header" onclick="toggleTerminal()">
+            <div style="display:flex; gap:20px;">
+                <span class="terminal-tab">PROBLEMS</span>
+                <span class="terminal-tab">OUTPUT</span>
+                <span class="terminal-tab active">TERMINAL</span>
+                <span class="terminal-tab">GITLENS</span>
+            </div>
+            <div class="terminal-actions">
+                <i class="fas fa-trash terminal-action-btn" onclick="clearTerminal(event)" title="Clear Terminal"></i>
+                <i class="fas fa-chevron-down terminal-action-btn"></i>
+            </div>
           </div>
-          <div class="terminal-content" id="terminal-content"></div>
+          <div class="terminal-content" id="terminal-output">
+            <div><span class="log-info">➜  portfolio</span> <span class="log-warn">git:(main)</span> npm start</div>
+            <div class="log-success">✔ Compiled successfully.</div>
+            <div>Listening on http://localhost:3000</div>
+            <div><span class="log-info">➜  portfolio</span> <span class="log-warn">git:(main)</span> <span class="blink">_</span></div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="status-bar">
-      <div class="left">
+      <div style="display:flex;">
         <div class="status-item"><i class="fas fa-code-branch"></i> main*</div>
         <div class="status-item"><i class="far fa-times-circle"></i> 0</div>
+        <div class="status-item"><i class="fas fa-exclamation-triangle"></i> 0</div>
       </div>
-      <div class="right">
-        <div class="status-item">Ln 12, Col 4</div>
+      <div style="display:flex;">
+        <div class="status-item" id="cursor-pos">Ln 1, Col 1</div>
         <div class="status-item">UTF-8</div>
-        <div class="status-item">React</div>
-        <div class="status-item"><i class="far fa-bell"></i></div>
+        <div class="status-item">TypeScript React</div>
+        <div class="status-item"><i class="fas fa-bell"></i></div>
       </div>
     </div>
 
     <script>
-      // --- State Management ---
-      let installedHobbies = [];
+      // State
+      let installedHobbies = ["Leadership"]; // Default from military
+      
+      // The Advanced Projects Data (Simulating a Config File)
+      const projectsData = `[
+  {
+    "id": "PROJ-01",
+    "alias": "Chatty_Messaging_Engine",
+    "architecture": "Event-Driven / Real-Time",
+    "core_features": {
+      "communication": "Bi-directional WebSocket pipeline (Socket.IO)",
+      "latency": "Optimized for sub-100ms message delivery",
+      "security": "Stateless JWT Auth & HttpOnly Cookie storage",
+      "state_management": "Zustand (Global Store for live user presence)"
+    },
+    "tech_stack": [
+      "Node.js",
+      "Express",
+      "MongoDB (Mongoose)",
+      "React.js",
+      "TailwindCSS"
+    ],
+    "deployment": {
+      "status": "Production",
+      "platform": "Render",
+      "repo_link": "github.com/shalevbd7/fullstack-chat-app"
+    }
+  },
+  {
+    "id": "PROJ-02",
+    "alias": "Fitness_Analytics_Platform",
+    "architecture": "RESTful API / MVC Pattern",
+    "core_features": {
+      "data_handling": "Complex aggregation pipelines for progress analytics",
+      "scalability": "Modular schema design for user growth",
+      "ux_optimization": "Responsive SPA with dynamic data visualization",
+      "access_control": "Secure session management"
+    },
+    "tech_stack": [
+      "React (Hooks)",
+      "Node.js API",
+      "NoSQL Database"
+    ],
+    "deployment": {
+      "status": "Production",
+      "platform": "Render",
+      "repo_link": "github.com/shalevbd7/fitness-app"
+    }
+  },
+  {
+    "id": "PROJ-03",
+    "alias": "Enterprise_Media_System",
+    "architecture": "N-Tier Layered (Controller-Service-DAL)",
+    "core_features": {
+      "design_pattern": "Strict separation of concerns (SoC)",
+      "authorization": "Granular RBAC (Role-Based Access Control)",
+      "backend_logic": "Service-oriented business logic layer",
+      "extensibility": "Microservices-ready structure"
+    },
+    "tech_stack": [
+      "React.js",
+      "Express.js",
+      "MongoDB"
+    ],
+    "deployment": {
+      "status": "Development",
+      "repo_link": "github.com/shalevbd7/movie-web"
+    }
+  }
+]
 
-      // --- Initialization ---
+// --- GUI RENDER PREVIEW BELOW ---`;
+
+      // Initialize
       document.addEventListener("DOMContentLoaded", () => {
         renderAboutFile();
+
+        // Random line number simulator
+        setInterval(() => {
+          const ln = Math.floor(Math.random() * 50) + 1;
+          const col = Math.floor(Math.random() * 80) + 1;
+          document.getElementById(
+            "cursor-pos"
+          ).innerText = `Ln ${ln}, Col ${col}`;
+        }, 3000);
       });
 
-      // --- 1. Dynamic Rendering of about.js ---
+      // --- 1. Dynamic Code Rendering ---
       function renderAboutFile() {
         const container = document.getElementById("content-about");
         let html = "";
-        let lineNum = 1;
+        let line = 1;
 
-        const addLine = (content) => {
-          html += `<div class="line"><span class="num">${lineNum++}</span>${content}</div>`;
-        };
+        const add = (content) =>
+          (html += `<div class="line"><span class="num">${line++}</span>${content}</div>`);
 
-        // Static Top Part
-        addLine('<span class="comment">/**</span>');
-        addLine('<span class="comment"> * Developer Profile</span>');
-        addLine('<span class="comment"> * @author Shalev Ben David</span>');
-        addLine('<span class="comment"> */</span>');
-        addLine(
-          '<span class="keyword">const</span> <span class="var">developer</span> <span class="keyword">=</span> {'
+        add(
+          '<span class="keyword">import</span> { <span class="class-name">Developer</span> } <span class="keyword">from</span> <span class="string">"human-resources"</span>;'
         );
-        addLine(
-          '&nbsp;&nbsp;<span class="attr">name</span>: <span class="string">"Shalev Ben David"</span>,'
+        add("");
+        add(
+          '<span class="keyword">const</span> <span class="var">shalev</span>: <span class="class-name">Developer</span> = {'
         );
-        addLine(
-          '&nbsp;&nbsp;<span class="attr">role</span>: <span class="string">"Full Stack Developer"</span>,'
+        add(
+          '&nbsp;&nbsp;<span class="prop">name</span>: <span class="string">"Shalev Ben David"</span>,'
         );
-        addLine(
-          '&nbsp;&nbsp;<span class="attr">traits</span>: [<span class="string">"Leadership"</span>, <span class="string">"Creative"</span>, <span class="string">"Self-Learner"</span>],'
+        add(
+          '&nbsp;&nbsp;<span class="prop">role</span>: <span class="string">"Full Stack Developer"</span>,'
         );
-        addLine(
-          '&nbsp;&nbsp;<span class="attr">status</span>: <span class="string">"Open to work"</span>,'
+        add(
+          '&nbsp;&nbsp;<span class="prop">location</span>: <span class="string">"Israel"</span>,'
+        );
+        add(
+          '&nbsp;&nbsp;<span class="prop">isOpenToWork</span>: <span class="bool">true</span>,'
         );
 
-        // Dynamic Hobbies Part
+        // Dynamic Hobbies
         if (installedHobbies.length > 0) {
-          // Format array as string: ["Gym", "Music"]
-          const hobbiesString = installedHobbies
+          const hobbiesStr = installedHobbies
             .map((h) => `<span class="string">"${h}"</span>`)
             .join(", ");
-          addLine(
-            `&nbsp;&nbsp;<span class="attr">hobbies</span>: [${hobbiesString}]`
+          add(
+            `&nbsp;&nbsp;<span class="prop">skills_and_hobbies</span>: [${hobbiesStr}],`
           );
         } else {
-          // If empty, we can show commented out or empty array
-          addLine(
-            `&nbsp;&nbsp;<span class="comment">// Install extensions to see hobbies...</span>`
-          );
+          add(`&nbsp;&nbsp;<span class="prop">skills_and_hobbies</span>: [],`);
         }
 
-        // Closing brace
-        addLine("};");
+        add('&nbsp;&nbsp;<span class="prop">hardSkills</span>: {');
+        add(
+          '&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">frontend</span>: [<span class="string">"React"</span>, <span class="string">"Angular"</span>, <span class="string">"Tailwind"</span>],'
+        );
+        add(
+          '&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">backend</span>: [<span class="string">"Node.js"</span>, <span class="string">"Python"</span>, <span class="string">"C#"</span>],'
+        );
+        add(
+          '&nbsp;&nbsp;&nbsp;&nbsp;<span class="prop">database</span>: [<span class="string">"MongoDB"</span>, <span class="string">"MySQL"</span>]'
+        );
+        add("&nbsp;&nbsp;}");
+        add("};");
+        add("");
+        add(
+          '<span class="keyword">export default</span> <span class="var">shalev</span>;'
+        );
 
         container.innerHTML = html;
       }
 
-      // --- 2. Extensions Logic ---
-      function installExtension(btn, hobbyName) {
+      // --- 2. Interaction Logic ---
+      function openFile(fileId) {
+        // Show empty state if undefined
+        document.getElementById("empty-state").style.display = "none";
+
+        // 1. Sidebar active state
+        document.querySelectorAll(".file").forEach((f) => f.classList.remove("active"));
+        const activeFile = Array.from(document.querySelectorAll(".file")).find(
+          (f) => f.onclick.toString().includes(fileId)
+        );
+        if (activeFile) activeFile.classList.add("active");
+
+        // 2. Content active state
+        document.querySelectorAll(".code-content").forEach((c) => c.classList.remove("active"));
+        const contentDiv = document.getElementById("content-" + fileId);
+        contentDiv.classList.add("active");
+
+        // Special Rendering for Projects JSON to handle syntax highlight + injection
+        if(fileId === 'projects') {
+             renderProjectsFile(contentDiv);
+        }
+
+        // 3. Handle Tab (Show if closed, Activate)
+        const tab = document.getElementById("tab-" + fileId);
+        if (tab) {
+          tab.classList.remove("closed"); // Un-close if it was closed
+          document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+        }
+
+        // 4. Update Breadcrumbs
+        const map = {
+          readme: "README.md",
+          about: "about.ts",
+          projects: "projects.json",
+          settings: "settings.json",
+          contact: "contact.css",
+        };
+        document.getElementById("current-filename").innerText = map[fileId];
+
+        // 5. Mobile: Auto close sidebar when clicking a file
+        if (window.innerWidth <= 768) {
+          const sidebar = document.getElementById("sidebar");
+          const container = document.getElementById("main-container");
+          sidebar.classList.remove("mobile-open");
+          container.classList.remove("sidebar-open");
+        }
+      }
+      
+      function renderProjectsFile(container) {
+          // Clear previous content
+          container.innerHTML = '';
+          
+          const lines = projectsData.split("\n");
+          let html = "";
+          
+          lines.forEach((line, i) => {
+            if(line.includes("GUI RENDER PREVIEW")) return;
+            
+            let highlightedLine = line;
+
+            // 1. Color all strings first (values AND keys)
+            highlightedLine = highlightedLine.replace(
+                /"([^"]+)"/g,
+                '<span class="string">"$1"</span>'
+            );
+
+            // 2. Fix keys: Change color of strings followed by a colon
+            highlightedLine = highlightedLine.replace(
+                /<span class="string">"([^"]+)"<\/span>:/g,
+                '<span class="prop">"$1"</span>:'
+            );
+
+            // 3. Color keywords
+            highlightedLine = highlightedLine
+                .replace(/\bnull\b/g, '<span class="keyword">null</span>')
+                .replace(/\b(true|false)\b/g, '<span class="bool">$1</span>');
+
+            html += `<div class="line"><span class="num">${i + 1}</span>${highlightedLine}</div>`;
+          });
+          
+          // Append GUI Preview HTML
+          html += `
+             <div class="preview-container">
+               <div style="border-bottom: 1px solid #333; margin-bottom: 15px; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: flex-end;">
+                  <h3 style="color: #cccccc; font-size: 13px; margin: 0;">🚀 ARCHITECTURE & DEPLOYMENTS</h3>
+                  <span style="font-size: 11px; color: #858585;">Read-Only View</span>
+               </div>
+               
+               <div class="projects-grid">
+                 <div class="project-card">
+                   <div class="project-header">
+                     <div class="project-title">Chatty Messaging Engine</div>
+                     <span class="tech-badge" style="background:#0e639c; color:white;">Socket.IO</span>
+                   </div>
+                   <div class="tech-stack">
+                     <span class="tech-badge">Node</span>
+                     <span class="tech-badge">JWT</span>
+                     <span class="tech-badge">Zustand</span>
+                   </div>
+                   <div class="project-desc">
+                     <strong>Architecture:</strong> Event-Driven / Real-Time<br>
+                     Engineered a high-concurrency messaging system ensuring sub-100ms latency. Implemented stateless JWT authentication and optimized payload delivery.
+                   </div>
+                   <div class="project-actions">
+                      <button class="btn-run btn-live" onclick="runProject('https://fullstack-chat-app-b454.onrender.com', 'Chatty Live')"><i class="fas fa-satellite-dish"></i> Live System</button>
+                      <button class="btn-run" onclick="runProject('https://github.com/shalevbd7/fullstack-chat-app', 'Chatty Code')"><i class="fas fa-code-branch"></i> Repository</button>
+                   </div>
+                 </div>
+
+                 <div class="project-card">
+                   <div class="project-header">
+                     <div class="project-title">Fitness Analytics Platform</div>
+                     <span class="tech-badge" style="background:#238636; color:white;">REST API</span>
+                   </div>
+                   <div class="tech-stack">
+                     <span class="tech-badge">React</span>
+                     <span class="tech-badge">Aggregation</span>
+                     <span class="tech-badge">MVC</span>
+                   </div>
+                   <div class="project-desc">
+                     <strong>Architecture:</strong> MVC / Scalable Schema<br>
+                     Developed a data-intensive platform utilizing complex aggregation pipelines for user progress tracking and dynamic visualization.
+                   </div>
+                   <div class="project-actions">
+                      <button class="btn-run btn-live" onclick="runProject('https://fitness-app-for-mobile.onrender.com', 'Fitness Live')"><i class="fas fa-satellite-dish"></i> Live System</button>
+                      <button class="btn-run" onclick="runProject('https://github.com/shalevbd7/fitness-app', 'Fitness Code')"><i class="fas fa-code-branch"></i> Repository</button>
+                   </div>
+                 </div>
+
+                 <div class="project-card">
+                    <div class="project-header">
+                      <div class="project-title">Enterprise Media System</div>
+                      <span class="tech-badge" style="border: 1px solid #d4d4d4;">N-Tier</span>
+                    </div>
+                    <div class="tech-stack">
+                     <span class="tech-badge">RBAC</span>
+                     <span class="tech-badge">Microservices</span>
+                   </div>
+                    <div class="project-desc">
+                      <strong>Architecture:</strong> Layered (Controller-Service-DAL)<br>
+                      Designed a secure content distribution system enforcing strict Role-Based Access Control (RBAC) and separation of concerns.
+                    </div>
+                    <div class="project-actions">
+                       <button class="btn-run" onclick="runProject('https://github.com/shalevbd7/movie-web', 'Movie Code')"><i class="fas fa-code-branch"></i> Repository</button>
+                    </div>
+                  </div>
+               </div>
+             </div>`;
+          
+          container.innerHTML = html;
+      }
+
+      function closeTab(event, fileId) {
+        event.stopPropagation(); // Stop click from activating the tab
+
+        const tab = document.getElementById("tab-" + fileId);
+        const content = document.getElementById("content-" + fileId);
+
+        // Hide Tab and Content
+        tab.classList.add("closed");
+        tab.classList.remove("active");
+        content.classList.remove("active");
+
+        // If we closed the active tab, switch to another visible tab
+        const visibleTabs = Array.from(
+          document.querySelectorAll(".tab:not(.closed)")
+        );
+        if (visibleTabs.length > 0) {
+          // Open the last visible tab
+          const lastTabId = visibleTabs[visibleTabs.length - 1].id.replace(
+            "tab-",
+            ""
+          );
+          openFile(lastTabId);
+        } else {
+          // No tabs left
+          document.getElementById("empty-state").style.display = "flex";
+          document.getElementById("current-filename").innerText = "";
+          document
+            .querySelectorAll(".file")
+            .forEach((f) => f.classList.remove("active"));
+        }
+      }
+
+      function switchSidebar(viewId) {
+        // Activity bar icons
+        document
+          .querySelectorAll(".activity-bar .icon")
+          .forEach((i) => i.classList.remove("active"));
+        const icon = Array.from(
+          document.querySelectorAll(".activity-bar .icon")
+        ).find((i) => i.onclick && i.onclick.toString().includes(viewId));
+        if (icon) icon.classList.add("active");
+
+        // Sidebar Views
+        document
+          .querySelectorAll(".sidebar-view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-" + viewId).classList.add("active");
+
+        // Mobile Toggle Logic
+        const sidebar = document.getElementById("sidebar");
+        const container = document.getElementById("main-container");
+
+        sidebar.classList.add("mobile-open");
+        container.classList.add("sidebar-open");
+
+        // Remove badge if opening explorer
+        if (viewId === "explorer") {
+          document.getElementById("explorer-badge").classList.remove("show");
+        }
+      }
+
+      // Close sidebar when clicking outside on mobile (Overlay click)
+      document.querySelector(".editor-area").addEventListener("click", (e) => {
+        if (
+          window.innerWidth <= 768 &&
+          document.getElementById("sidebar").classList.contains("mobile-open")
+        ) {
+          document.getElementById("sidebar").classList.remove("mobile-open");
+          document
+            .getElementById("main-container")
+            .classList.remove("sidebar-open");
+        }
+      });
+
+      // --- 3. Buttons Logic ---
+
+      // Install Extension
+      function installExtension(btn, name) {
+        if (installedHobbies.includes(name)) return;
+
         btn.innerText = "Installing...";
+
+        logTerminal(`Installing extension: ${name}...`);
 
         setTimeout(() => {
           btn.innerText = "Installed";
           btn.classList.add("installed");
+          installedHobbies.push(name);
 
-          // Add to state if not exists
-          if (!installedHobbies.includes(hobbyName)) {
-            installedHobbies.push(hobbyName);
+          renderAboutFile(); // Re-render code
+          logTerminal(`Extension '${name}' installed successfully.`);
 
-            // Re-render the file
-            renderAboutFile();
+          // Show badge
+          document.getElementById("explorer-badge").classList.add("show");
+        }, 1000);
+      }
 
-            // Notification Dot on Explorer
-            const badge = document.getElementById("explorer-badge");
-            badge.classList.add("show");
+      // Run Project / Live Demo
+      function runProject(url, name) {
+        logTerminal(`npm run deploy: ${name}`);
+        logTerminal(`> Opening URL: ${url}`);
 
-            // Optional: Remove badge after few seconds
-            setTimeout(() => badge.classList.remove("show"), 3000);
-          }
+        setTimeout(() => {
+          window.open(url, "_blank");
+          logTerminal(
+            `<span class="log-success">✔ External window opened.</span>`
+          );
         }, 800);
       }
 
-      // --- 3. Navigation Logic ---
-      function openFile(fileId) {
-        document
-          .querySelectorAll(".activity-bar .icon")
-          .forEach((i) => i.classList.remove("active"));
-        document
-          .querySelector('.activity-bar .icon[title="Explorer (Files)"]')
-          .classList.add("active");
+      // Send Email with Hook
+      function sendEmail() {
+        const subject = document.getElementById("email-subject").value;
+        const body = document.getElementById("email-body").value;
+        const hook = document.getElementById("email-hook").value;
 
-        switchSidebar("explorer");
+        let finalBody = body;
+        if (hook) {
+          finalBody += `\n\nP.S. My favorite hook is: ${hook}`;
+        }
 
-        document
-          .querySelectorAll(".code-content")
-          .forEach((c) => c.classList.remove("active"));
-        document.getElementById("content-" + fileId).classList.add("active");
+        logTerminal(`Processing request POST /api/contact...`);
 
-        document
-          .querySelectorAll(".tab")
-          .forEach((t) => t.classList.remove("active"));
-        const activeTab = document.getElementById("tab-" + fileId);
-        if (activeTab) activeTab.classList.add("active");
-
-        document
-          .querySelectorAll(".file")
-          .forEach((f) => f.classList.remove("active"));
-        const sidebarFile = Array.from(document.querySelectorAll(".file")).find(
-          (f) => f.getAttribute("onclick").includes(fileId)
-        );
-        if (sidebarFile) sidebarFile.classList.add("active");
-
-        const nameMap = {
-          readme: "README.md",
-          about: "about.js",
-          settings: "settings.json",
-          projects: "projects.jsx",
-          contact: "contact.html",
-        };
-        document.getElementById("current-file").innerText = nameMap[fileId];
+        setTimeout(() => {
+          window.location.href = `mailto:shalevbd7@gmail.com?subject=${encodeURIComponent(
+            subject
+          )}&body=${encodeURIComponent(finalBody)}`;
+          logTerminal(
+            `<span class="log-success">✔ Email client opened. Status: 200 OK</span>`
+          );
+        }, 1000);
       }
 
-      function switchSidebar(viewName) {
-        document
-          .querySelectorAll(".activity-bar .icon")
-          .forEach((icon) => icon.classList.remove("active"));
+      // Terminal Utils
+      function logTerminal(html) {
+        const term = document.getElementById("terminal");
+        const content = document.getElementById("terminal-output");
 
-        let title = "";
-        if (viewName === "explorer") title = "Explorer (Files)";
-        if (viewName === "search") title = "Search";
-        if (viewName === "extensions") title = "Extensions (Hobbies)";
+        term.classList.add("open"); // Auto open
 
-        const activeIcon = Array.from(
-          document.querySelectorAll(".activity-bar .icon")
-        ).find((i) => i.title === title);
-        if (activeIcon) activeIcon.classList.add("active");
-
-        document
-          .querySelectorAll(".sidebar-view")
-          .forEach((view) => view.classList.remove("active"));
-        document.getElementById("view-" + viewName).classList.add("active");
+        const line = document.createElement("div");
+        line.innerHTML = html;
+        // Insert before the last line (the prompt)
+        content.insertBefore(line, content.lastElementChild);
+        content.scrollTop = content.scrollHeight;
       }
 
-      // --- 4. Search Logic ---
+      function clearTerminal(event) {
+        if (event) event.stopPropagation(); // Prevent toggling the terminal
+        const content = document.getElementById("terminal-output");
+        content.innerHTML =
+          '<div><span class="log-info">➜  portfolio</span> <span class="log-warn">git:(main)</span> <span class="blink">_</span></div>';
+      }
+
+      function toggleTerminal() {
+        document.getElementById("terminal").classList.toggle("open");
+      }
+
+      // Search Logic
       function handleSearch(input) {
-        const query = input.value.toLowerCase();
-        const resultsContainer = document.getElementById("search-results");
-        resultsContainer.innerHTML = "";
-
-        if (query.length < 2) return;
+        const val = input.value.toLowerCase();
+        const results = document.getElementById("search-results");
+        results.innerHTML = "";
 
         const files = [
           { name: "README.md", id: "readme" },
-          { name: "about.js", id: "about" },
+          { name: "about.ts", id: "about" },
+          { name: "projects.json", id: "projects" },
           { name: "settings.json", id: "settings" },
-          { name: "projects.jsx", id: "projects" },
-          { name: "contact.html", id: "contact" },
+          { name: "contact.css", id: "contact" },
         ];
 
-        const matches = files.filter((f) =>
-          f.name.toLowerCase().includes(query)
-        );
-
-        matches.forEach((match) => {
-          const div = document.createElement("div");
-          div.className = "result-item";
-          div.innerText = match.name;
-          div.onclick = () => openFile(match.id);
-          resultsContainer.appendChild(div);
+        files.forEach((f) => {
+          if (f.name.toLowerCase().includes(val)) {
+            results.innerHTML += `<div class="result-item" onclick="openFile('${f.id}')"><i class="fas fa-file"></i> ${f.name}</div>`;
+          }
         });
-
-        if (matches.length === 0) {
-          resultsContainer.innerHTML =
-            '<div style="padding:5px; color:#858585;">No results found</div>';
-        }
       }
 
-      // --- 5. Email Logic ---
-      function sendEmail() {
-        const name = document.getElementById("email-name").value;
-        const subject = document.getElementById("email-subject").value;
-        const body = document.getElementById("email-body").value;
-
-        const mailtoLink = `mailto:shalevbd7@gmail.com?subject=${encodeURIComponent(
-          subject
-        )}&body=${encodeURIComponent("Name: " + name + "\n\n" + body)}`;
-        window.location.href = mailtoLink;
-
-        document.getElementById("contactFormElement").style.display = "none";
-        document.getElementById("email-success").style.display = "block";
-
-        const terminal = document.getElementById("terminal");
-        const terminalContent = document.getElementById("terminal-content");
-
-        terminal.classList.add("open");
-        terminalContent.innerHTML = `
-                <div><span class="log-info">➜  portfolio git:(main)</span> node send_email.js</div>
-                <div style="margin-top:5px;">Parsing headers...</div>
-                <div>Connecting to SMTP server...</div>
-                <div class="log-success">✔ Email client launched successfully.</div>
-                <div class="log-success">✔ Status: 200 OK</div>
-                <div><span class="log-info">➜  portfolio git:(main)</span> <span class="blink">_</span></div>
-            `;
+      function toggleFolder(el) {
+        // Toggle arrow icon
+        const icon =
+          el.querySelector(".fa-chevron-down") ||
+          el.querySelector(".fa-chevron-right");
+        if (icon.classList.contains("fa-chevron-down")) {
+          icon.classList.remove("fa-chevron-down");
+          icon.classList.add("fa-chevron-right");
+          document.getElementById("file-list").style.display = "none";
+        } else {
+          icon.classList.remove("fa-chevron-right");
+          icon.classList.add("fa-chevron-down");
+          document.getElementById("file-list").style.display = "block";
+        }
       }
     </script>
   </body>
